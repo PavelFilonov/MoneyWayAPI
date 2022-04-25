@@ -6,6 +6,9 @@ import com.edu.moneywayapi.domain.mapper.OperationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class OperationDALMapper implements OperationMapper<OperationDAL> {
 
@@ -22,6 +25,7 @@ public class OperationDALMapper implements OperationMapper<OperationDAL> {
                 .nameOperation(operation.getNameOperation())
                 .categoryDAL(categoryDALMapper.map(operation.getCategory()))
                 .value(operation.getValue())
+                .dateOperation(operation.getDateOperation())
                 .build();
     }
 
@@ -35,6 +39,17 @@ public class OperationDALMapper implements OperationMapper<OperationDAL> {
                 .nameOperation(obj.getNameOperation())
                 .category(categoryDALMapper.map(obj.getCategoryDAL()))
                 .value(obj.getValue())
+                .dateOperation(obj.getDateOperation())
                 .build();
+    }
+
+    public List<Operation> mapListToEntity(List<OperationDAL> operationsDAL) {
+        List<Operation> operations = new ArrayList<>();
+
+        for (OperationDAL operationDAL : operationsDAL) {
+            operations.add(map(operationDAL));
+        }
+
+        return operations;
     }
 }

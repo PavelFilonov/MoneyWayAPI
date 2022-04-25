@@ -3,6 +3,8 @@ package com.edu.moneywayapi.domain.entity;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 public class Operation {
@@ -10,4 +12,5 @@ public class Operation {
     private NameOperation nameOperation;
     private Category category;
     private String value;
+    private LocalDateTime dateOperation;
 }

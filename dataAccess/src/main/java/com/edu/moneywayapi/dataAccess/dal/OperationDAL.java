@@ -4,6 +4,7 @@ import com.edu.moneywayapi.domain.entity.NameOperation;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -28,4 +29,7 @@ public class OperationDAL {
 
     @Column(nullable = false)
     private String value;
+
+    @Column(name = "date_operation", nullable = false)
+    private LocalDateTime dateOperation;
 }
