@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Operation {
     private Long id;
-    private NameOperation nameOperation;
+    private TypeOperation type;
     private Category category;
     private String value;
     private LocalDateTime dateOperation;

@@ -1,6 +1,6 @@
 package com.edu.moneywayapi.domain.entity;
 
-public enum NameOperation {
+public enum TypeOperation {
     INCOME,
     EXPENSE
 }

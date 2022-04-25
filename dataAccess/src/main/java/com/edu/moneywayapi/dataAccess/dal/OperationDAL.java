@@ -1,6 +1,6 @@
 package com.edu.moneywayapi.dataAccess.dal;
 
-import com.edu.moneywayapi.domain.entity.NameOperation;
+import com.edu.moneywayapi.domain.entity.TypeOperation;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,9 +19,9 @@ public class OperationDAL {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name_operation")
+    @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    private NameOperation nameOperation;
+    private TypeOperation type;
 
     @ManyToOne()
     @JoinColumn(name = "category_id", nullable = false)

@@ -45,6 +45,11 @@
             <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.mvallim</groupId>
+            <artifactId>java-fluent-validator</artifactId>
+            <version>1.10.0</version>
+        </dependency>
     </dependencies>
 
     <build>

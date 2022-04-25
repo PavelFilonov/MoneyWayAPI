@@ -23,7 +23,7 @@ public class OperationDTOMapper implements OperationMapper<OperationDTO> {
 
         return OperationDTO.builder()
                 .id(operation.getId())
-                .nameOperation(operation.getNameOperation())
+                .type(operation.getType())
                 .categoryDTO(categoryDTOMapper.map(operation.getCategory()))
                 .value(operation.getValue())
                 .dateOperation(operation.getDateOperation().toString())
@@ -37,7 +37,7 @@ public class OperationDTOMapper implements OperationMapper<OperationDTO> {
 
         return Operation.builder()
                 .id(obj.getId())
-                .nameOperation(obj.getNameOperation())
+                .type(obj.getType())
                 .category(categoryDTOMapper.map(obj.getCategoryDTO()))
                 .value(obj.getValue())
                 .dateOperation(LocalDateTime.parse(obj.getDateOperation()))
