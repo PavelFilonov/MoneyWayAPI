@@ -17,11 +17,31 @@ public class UserDTOMapper implements UserMapper<UserDTO> {
 
     @Override
     public UserDTO map(User user) {
-        return null;
+        if (user == null)
+            return null;
+
+        return UserDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .login(user.getLogin())
+                .password(user.getPassword())
+                .groups(groupDTOMapper.mapListToDTO(user.getGroups()))
+                .categories(categoryDTOMapper.mapListToDTO(user.getCategories()))
+                .build();
     }
 
     @Override
     public User map(UserDTO obj) {
-        return null;
+        if (obj == null)
+            return null;
+
+        return User.builder()
+                .id(obj.getId())
+                .email(obj.getEmail())
+                .login(obj.getLogin())
+                .password(obj.getPassword())
+                .groups(groupDTOMapper.mapListToEntity(obj.getGroups()))
+                .categories(categoryDTOMapper.mapListToEntity(obj.getCategories()))
+                .build();
     }
 }
