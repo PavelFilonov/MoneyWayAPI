@@ -24,9 +24,8 @@ public class GroupDAL {
     @Column(nullable = false, unique = true)
     private String token;
 
-    @ManyToOne()
-    @JoinColumn(name = "owner_id", nullable = false)
-    private UserDAL userDAL;
+    @Column(name = "owner_id", nullable = false)
+    private Long ownerId;
 
     @ManyToMany()
     @Column(nullable = false)

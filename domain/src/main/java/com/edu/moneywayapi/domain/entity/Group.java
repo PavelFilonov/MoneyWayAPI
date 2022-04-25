@@ -11,6 +11,6 @@ public class Group {
     private Long id;
     private String name;
     private String token;
-    private User user;
+    private Long ownerId;
     private List<Category> categories;
 }
