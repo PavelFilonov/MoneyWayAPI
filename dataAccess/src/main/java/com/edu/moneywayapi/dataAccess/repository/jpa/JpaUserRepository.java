@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JpaUserRepository extends JpaRepository<UserDAL, Long> {
     UserDAL findByLogin(String login);
+
     boolean existsByLogin(String login);
 }

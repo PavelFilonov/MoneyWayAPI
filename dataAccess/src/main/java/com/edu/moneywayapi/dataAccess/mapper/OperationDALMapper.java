@@ -22,7 +22,7 @@ public class OperationDALMapper implements OperationMapper<OperationDAL> {
 
         return OperationDAL.builder()
                 .id(operation.getId())
-                .typeOperation(operation.getType())
+                .type(operation.getType())
                 .categoryDAL(categoryDALMapper.map(operation.getCategory()))
                 .value(operation.getValue())
                 .dateOperation(operation.getDateOperation())

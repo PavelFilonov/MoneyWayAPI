@@ -34,4 +34,14 @@ public class GroupRepositoryImpl implements GroupRepository {
     public void deleteById(Long id) {
         jpaGroupRepository.deleteById(id);
     }
+
+    @Override
+    public Group findByToken(String token) {
+        return groupDALMapper.map(jpaGroupRepository.findByToken(token));
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        jpaGroupRepository.deleteUser(userId);
+    }
 }

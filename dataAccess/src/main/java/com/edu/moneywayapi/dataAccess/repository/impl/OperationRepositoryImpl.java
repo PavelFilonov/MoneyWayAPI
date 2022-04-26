@@ -9,6 +9,7 @@ import com.edu.moneywayapi.domain.repository.OperationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -30,5 +31,12 @@ public class OperationRepositoryImpl implements OperationRepository {
     @Override
     public Operation save(Operation operation) {
         return operationDALMapper.map(jpaOperationRepository.save(operationDALMapper.map(operation)));
+    }
+
+    @Override
+    public List<Operation> findByUserIdAndTypeOperationAndPeriod(Long userId, String typeOperation,
+                                                                 LocalDateTime fromDate, LocalDateTime toDate) {
+        return operationDALMapper.mapListToEntity(jpaOperationRepository.findByUserIdAndTypeOperationAndPeriod(
+                userId, typeOperation, fromDate, toDate));
     }
 }

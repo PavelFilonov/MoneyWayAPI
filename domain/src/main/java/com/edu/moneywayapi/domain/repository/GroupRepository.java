@@ -6,6 +6,12 @@ import java.util.Optional;
 
 public interface GroupRepository {
     Group save(Group group);
+
     Optional<Group> findById(Long id);
+
     void deleteById(Long id);
+
+    Group findByToken(String token);
+
+    void deleteUser(Long userId);
 }
