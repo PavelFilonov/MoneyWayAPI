@@ -1,6 +1,7 @@
 package com.edu.moneywayapi.domain.service.impl;
 
 import com.edu.moneywayapi.domain.entity.User;
+import com.edu.moneywayapi.domain.exception.NoSuchUserException;
 import com.edu.moneywayapi.domain.repository.UserRepository;
 import com.edu.moneywayapi.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -17,8 +19,31 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
+    public User findById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty())
+            throw new NoSuchUserException(String.format("The user with id %s was not found", id));
+        return user.get();
+    }
+
+    @Override
     public User findByLogin(String login) {
         return userRepository.findByLogin(login);
+    }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
+    }
+
+    @Override
+    public boolean existsByLogin(String login) {
+        return userRepository.existsByLogin(login);
     }
 
     @Override
