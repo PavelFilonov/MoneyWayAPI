@@ -1,4 +1,4 @@
-package com.edu.moneywayapi.domain.config;
+package com.edu.moneywayapi.webApi.config;
 
 import com.edu.moneywayapi.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
