@@ -23,7 +23,7 @@ public class OperationDAL {
     @Enumerated(EnumType.STRING)
     private TypeOperation type;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryDAL categoryDAL;
 

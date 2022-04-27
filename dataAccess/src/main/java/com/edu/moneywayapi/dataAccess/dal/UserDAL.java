@@ -27,7 +27,7 @@ public class UserDAL {
     @Column(nullable = false)
     private String password;
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Column(nullable = false)
     @JoinTable(
             name = "user_group",
@@ -36,7 +36,7 @@ public class UserDAL {
     )
     private List<GroupDAL> groups;
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Column(nullable = false)
     @JoinTable(
             name = "user_category",
