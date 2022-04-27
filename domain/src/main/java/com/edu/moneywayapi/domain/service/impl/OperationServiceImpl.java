@@ -37,7 +37,7 @@ public class OperationServiceImpl implements OperationService {
 
     @Override
     public List<Operation> findByUserIdAndTypeOperationAndPeriod(Long userId, TypeOperation typeOperation,
-                                                                 LocalDateTime fromDate, LocalDateTime toDate) throws InvalidPeriodException {
+                                                                 LocalDateTime fromDate, LocalDateTime toDate) throws Exception {
 
         if (userId == null || typeOperation == null || fromDate == null || toDate == null)
             throw new NullPointerException("Invalid object was found");

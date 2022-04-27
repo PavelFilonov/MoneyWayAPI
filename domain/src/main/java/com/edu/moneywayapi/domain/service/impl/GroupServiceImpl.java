@@ -4,10 +4,12 @@ import com.edu.moneywayapi.domain.entity.Group;
 import com.edu.moneywayapi.domain.exception.NoSuchGroupException;
 import com.edu.moneywayapi.domain.repository.GroupRepository;
 import com.edu.moneywayapi.domain.service.GroupService;
+import com.edu.moneywayapi.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -15,8 +17,12 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private GroupRepository groupRepository;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public Group save(Group group) {
+        group.setToken(String.valueOf(UUID.randomUUID()));
         return groupRepository.save(group);
     }
 
@@ -30,6 +36,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void deleteById(Long id) {
+        findById(id);
         groupRepository.deleteById(id);
     }
 
@@ -43,6 +50,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void deleteUser(Long userId) {
+        userService.findById(userId);
         groupRepository.deleteUser(userId);
     }
 }

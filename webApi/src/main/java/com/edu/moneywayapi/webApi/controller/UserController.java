@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping(value = "/user")
 public class UserController {
 
     @Autowired
@@ -38,10 +38,9 @@ public class UserController {
     public ResponseEntity<?> login(@PathVariable(name = "email") String email) {
         UserDTO user = userDTOMapper.map(userService.findByEmail(email));
 
-        if (user == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return user != null
+                ? new ResponseEntity<>(user, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
