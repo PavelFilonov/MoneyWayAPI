@@ -3,7 +3,7 @@ package com.edu.moneywayapi.domain.service;
 import com.edu.moneywayapi.domain.entity.Category;
 import com.edu.moneywayapi.domain.entity.Operation;
 import com.edu.moneywayapi.domain.entity.TypeOperation;
-import com.edu.moneywayapi.domain.service.impl.InvalidPeriodException;
+import com.edu.moneywayapi.domain.exception.InvalidPeriodException;
 
 import java.time.LocalDateTime;
 import java.util.List;

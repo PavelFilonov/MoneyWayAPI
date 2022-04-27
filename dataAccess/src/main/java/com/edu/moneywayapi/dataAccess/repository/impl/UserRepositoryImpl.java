@@ -31,6 +31,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User findByEmail(String email) {
+        return userDALMapper.map(jpaUserRepository.findByEmail(email));
+    }
+
+    @Override
     public User save(User user) {
         return userDALMapper.map(jpaUserRepository.save(userDALMapper.map(user)));
     }
@@ -43,5 +48,15 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean existsByLogin(String login) {
         return jpaUserRepository.existsByLogin(login);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        jpaUserRepository.deleteById(id);
+    }
+
+    @Override
+    public void update(User user, Long id) {
+        jpaUserRepository.update(user.getEmail(), user.getLogin(), user.getPassword(), id);
     }
 }

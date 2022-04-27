@@ -10,11 +10,17 @@ public interface UserService extends UserDetailsService {
 
     User findByLogin(String login);
 
+    User findByEmail(String email);
+
     User save(User user);
 
     boolean existsById(Long id);
 
     boolean existsByLogin(String login);
+
+    void deleteById(Long id);
+
+    void update(User user, Long id);
 
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 }
