@@ -31,7 +31,7 @@ public class GroupController {
             GroupDTO group = groupDTOMapper.map(groupService.findById(id));
             return new ResponseEntity<>(group, HttpStatus.OK);
         } catch (NoSuchGroupException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -49,7 +49,7 @@ public class GroupController {
     public ResponseEntity<?> add(@RequestBody GroupDTO group) {
         ValidationResult validationResult = groupValidator.validate(group);
         if (!validationResult.isValid())
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
 
         groupService.save(groupDTOMapper.map(group));
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -61,17 +61,13 @@ public class GroupController {
             groupService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchGroupException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/delete/user/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable(name = "userId") Long userId) {
-        try {
-            groupService.deleteUser(userId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NoSuchUserException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    @DeleteMapping("/{id}/user")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, @RequestParam String userLogin) {
+        groupService.deleteUser(id, userLogin);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

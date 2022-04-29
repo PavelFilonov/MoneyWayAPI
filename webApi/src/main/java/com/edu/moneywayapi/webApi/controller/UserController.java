@@ -1,71 +1,158 @@
 package com.edu.moneywayapi.webApi.controller;
 
 import br.com.fluentvalidator.context.ValidationResult;
-import com.edu.moneywayapi.domain.exception.NoSuchUserException;
+import com.edu.moneywayapi.domain.entity.User;
 import com.edu.moneywayapi.domain.service.UserService;
 import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.UserDTOMapper;
 import com.edu.moneywayapi.webApi.validator.UserValidator;
+import com.jayway.jsonpath.JsonPath;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+
 @RestController
-@RequestMapping(value = "/user")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final UserValidator userValidator;
+    private final UserDTOMapper userDTOMapper;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+
+    @Value("${user.email.not-match}")
+    private String isEmailNotMatchFormatMessage;
+    @Value("${format.email}")
+    private String formatEmail;
+
+    @Value("${user.login.size.min}")
+    private Integer minSizeLogin;
+    @Value("${user.login.size.max}")
+    private Integer maxSizeLogin;
+    @Value("${user.login.size.message}")
+    private String isIncorrectSizeLoginMessage;
+
+    @Value("${user.password.size.min}")
+    private Integer minSizePassword;
+    @Value("${user.password.size.max}")
+    private Integer maxSizePassword;
+    @Value("${user.password.size.message}")
+    private String isIncorrectSizePasswordMessage;
 
     @Autowired
-    private UserValidator userValidator;
-
-    @Autowired
-    private UserDTOMapper userDTOMapper;
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable(name = "id") Long id) {
-        try {
-            UserDTO user = userDTOMapper.map(userService.findById(id));
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch (NoSuchUserException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public UserController(UserService userService, UserValidator userValidator, UserDTOMapper userDTOMapper,
+                          AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.userValidator = userValidator;
+        this.userDTOMapper = userDTOMapper;
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<?> login(@PathVariable(name = "email") String email) {
-        UserDTO user = userDTOMapper.map(userService.findByEmail(email));
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserDTO user) {
+        User userFromDb = userService.findByEmail(user.getEmail());
 
-        return user != null
-                ? new ResponseEntity<>(user, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (userFromDb == null)
+            return new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND);
+
+        Authentication authObject = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userFromDb.getLogin(), user.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authObject);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserDTO user) {
         ValidationResult validationResult = userValidator.validate(user);
         if (!validationResult.isValid())
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(validationResult.getErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
 
-        userService.save(userDTOMapper.map(user));
+        if (userService.existsByEmail(user.getEmail()))
+            return new ResponseEntity<>("Email уже используется", HttpStatus.CONFLICT);
+
+        if (userService.existsByLogin(user.getLogin()))
+            return new ResponseEntity<>("Логин уже используется", HttpStatus.CONFLICT);
+
+        userService.save(userDTOMapper.map(
+                UserDTO.builder()
+                        .email(user.getEmail())
+                        .login(user.getLogin())
+                        .password(passwordEncoder.encode(user.getPassword()))
+                        .groups(new ArrayList<>())
+                        .categories(new ArrayList<>())
+                        .build()));
+
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody UserDTO user) {
-        try {
-            userDTOMapper.map(userService.findById(id));
-        } catch (NoSuchUserException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
-        ValidationResult validationResult = userValidator.validate(user);
-        if (!validationResult.isValid())
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @GetMapping("/users/profile")
+    public ResponseEntity<?> get(Principal principal) {
+        System.out.println(principal.getName());
+        UserDTO user = userDTOMapper.map(userService.findByLogin(principal.getName()));
 
-        userService.update(userDTOMapper.map(user), id);
+        return new ResponseEntity<>(
+                UserDTO.builder()
+                        .email(user.getEmail())
+                        .login(user.getLogin()).build(),
+                HttpStatus.OK);
+    }
+
+    @PutMapping("/users/profile/email")
+    public ResponseEntity<?> updateEmail(Principal principal, @RequestBody String responseJson) {
+        String email = JsonPath.read(responseJson, "$.email");
+
+        if (!Pattern.matches(formatEmail, email))
+            return new ResponseEntity<>(isEmailNotMatchFormatMessage, HttpStatus.UNPROCESSABLE_ENTITY);
+
+        if (userService.existsByEmail(email))
+            return new ResponseEntity<>("Email уже используется", HttpStatus.CONFLICT);
+
+        UserDTO userFromDb = userDTOMapper.map(userService.findByLogin(principal.getName()));
+        userService.updateEmail(email, userFromDb.getId());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/users/profile/login")
+    public ResponseEntity<?> updateLogin(Principal principal, @RequestBody String responseJson) {
+        String login = JsonPath.read(responseJson, "$.login");
+
+        if (minSizeLogin > login.length() || login.length() > maxSizeLogin)
+            return new ResponseEntity<>(isIncorrectSizeLoginMessage, HttpStatus.UNPROCESSABLE_ENTITY);
+
+        if (userService.existsByLogin(login))
+            return new ResponseEntity<>("Логин уже используется", HttpStatus.CONFLICT);
+
+        UserDTO userFromDb = userDTOMapper.map(userService.findByLogin(principal.getName()));
+        userService.updateLogin(login, userFromDb.getId());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/users/profile/password")
+    public ResponseEntity<?> updatePassword(Principal principal, @RequestBody String responseJson) {
+        String password = JsonPath.read(responseJson, "$.password");
+
+        if (minSizePassword > password.length() || password.length() > maxSizePassword)
+            return new ResponseEntity<>(isIncorrectSizePasswordMessage, HttpStatus.UNPROCESSABLE_ENTITY);
+
+        UserDTO userFromDb = userDTOMapper.map(userService.findByLogin(principal.getName()));
+        userService.updatePassword(passwordEncoder.encode(password), userFromDb.getId());
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

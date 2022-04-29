@@ -45,7 +45,7 @@ public class OperationController {
     public ResponseEntity<?> add(@RequestBody OperationDTO operation) {
         ValidationResult validationResult = operationValidator.validate(operation);
         if (!validationResult.isValid())
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
 
         operationService.save(operationDALMapper.map(operation));
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -61,7 +61,7 @@ public class OperationController {
                     operationService.findByUserIdAndTypeOperationAndPeriod(userId, typeOperation, fromDate, toDate));
             return new ResponseEntity<>(operations, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 }

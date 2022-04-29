@@ -13,5 +13,5 @@ public interface GroupRepository {
 
     Group findByToken(String token);
 
-    void deleteUser(Long userId);
+    void deleteUser(Long groupId, Long userId);
 }

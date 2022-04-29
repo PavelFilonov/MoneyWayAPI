@@ -11,5 +11,5 @@ public interface GroupService {
 
     Group findByToken(String token);
 
-    void deleteUser(Long userId);
+    void deleteUser(Long groupId, String userLogin);
 }

@@ -1,6 +1,7 @@
 package com.edu.moneywayapi.domain.service.impl;
 
 import com.edu.moneywayapi.domain.entity.Group;
+import com.edu.moneywayapi.domain.entity.User;
 import com.edu.moneywayapi.domain.exception.NoSuchGroupException;
 import com.edu.moneywayapi.domain.repository.GroupRepository;
 import com.edu.moneywayapi.domain.service.GroupService;
@@ -49,8 +50,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void deleteUser(Long userId) {
-        userService.findById(userId);
-        groupRepository.deleteUser(userId);
+    public void deleteUser(Long groupId, String userLogin) {
+        User user = userService.findByLogin(userLogin);
+        groupRepository.deleteUser(groupId, user.getId());
     }
 }

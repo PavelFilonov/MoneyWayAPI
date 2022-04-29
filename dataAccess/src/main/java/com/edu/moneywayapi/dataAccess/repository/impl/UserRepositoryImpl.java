@@ -51,12 +51,27 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public boolean existsByEmail(String email) {
+        return jpaUserRepository.existsByEmail(email);
+    }
+
+    @Override
     public void deleteById(Long id) {
         jpaUserRepository.deleteById(id);
     }
 
     @Override
-    public void update(User user, Long id) {
-        jpaUserRepository.update(user.getEmail(), user.getLogin(), user.getPassword(), id);
+    public void updateEmail(String email, Long id) {
+        jpaUserRepository.updateEmail(email, id);
+    }
+
+    @Override
+    public void updateLogin(String login, Long id) {
+        jpaUserRepository.updateLogin(login, id);
+    }
+
+    @Override
+    public void updatePassword(String password, Long id) {
+        jpaUserRepository.updatePassword(password, id);
     }
 }

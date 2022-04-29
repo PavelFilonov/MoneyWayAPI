@@ -48,7 +48,7 @@ public class CategoryController {
     public ResponseEntity<?> add(@RequestBody CategoryDTO category) {
         ValidationResult validationResult = categoryValidator.validate(category);
         if (!validationResult.isValid())
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
 
         categoryService.save(categoryDTOMapper.map(category));
         return new ResponseEntity<>(HttpStatus.CREATED);

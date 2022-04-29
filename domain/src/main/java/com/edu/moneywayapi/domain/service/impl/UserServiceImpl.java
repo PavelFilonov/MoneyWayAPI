@@ -52,13 +52,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
 
     @Override
-    public void update(User user, Long id) {
-        userRepository.update(user, id);
+    public void updateEmail(String email, Long id) {
+        userRepository.updateEmail(email, id);
+    }
+
+    @Override
+    public void updateLogin(String login, Long id) {
+        userRepository.updateLogin(login, id);
+    }
+
+    @Override
+    public void updatePassword(String password, Long id) {
+        userRepository.updatePassword(password, id);
     }
 
     @Override
