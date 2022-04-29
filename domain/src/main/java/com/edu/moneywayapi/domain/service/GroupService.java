@@ -22,4 +22,6 @@ public interface GroupService {
     boolean isOwner(Long groupId, Long userId);
 
     void addUser(Long groupId, Long userId);
+
+    void updateName(Long groupId, String name);
 }

@@ -60,4 +60,9 @@ public class GroupRepositoryImpl implements GroupRepository {
     public void addUser(Long groupId, Long userId) {
         jpaGroupRepository.addUser(groupId, userId);
     }
+
+    @Override
+    public void updateName(Long groupId, String name) {
+        jpaGroupRepository.updateName(groupId, name);
+    }
 }

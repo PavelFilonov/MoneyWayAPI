@@ -83,4 +83,9 @@ public class GroupServiceImpl implements GroupService {
     public void addUser(Long groupId, Long userId) {
         groupRepository.addUser(groupId, userId);
     }
+
+    @Override
+    public void updateName(Long groupId, String name) {
+        groupRepository.updateName(groupId, name);
+    }
 }

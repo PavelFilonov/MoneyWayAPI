@@ -21,4 +21,6 @@ public interface GroupRepository {
     Long getOwnerId(Long groupId);
 
     void addUser(Long groupId, Long userId);
+
+    void updateName(Long groupId, String name);
 }

@@ -15,8 +15,8 @@ public interface JpaGroupRepository extends JpaRepository<GroupDAL, Long> {
 
     @Transactional
     @Modifying
-    @Query(value =  "delete from user_group u_g" +
-                    "   where u_g.group_id = ?1 and u_g.user_id = ?2",
+    @Query(value =  "delete from user_group" +
+                    "   where group_id = ?1 and user_id = ?2",
             nativeQuery = true)
     void deleteUser(Long groupId, Long userId);
 
@@ -37,4 +37,9 @@ public interface JpaGroupRepository extends JpaRepository<GroupDAL, Long> {
     @Modifying
     @Query(value = "insert into user_group (user_id, group_id) values (?2, ?1)", nativeQuery = true)
     void addUser(Long groupId, Long userId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update group1 set name = ?2 where id = ?1", nativeQuery = true)
+    void updateName(Long groupId, String name);
 }
