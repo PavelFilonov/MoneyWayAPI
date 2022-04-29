@@ -41,5 +41,5 @@ public interface JpaGroupRepository extends JpaRepository<GroupDAL, Long> {
     @Transactional
     @Modifying
     @Query(value = "update group1 set name = ?2 where id = ?1", nativeQuery = true)
-    void updateName(Long groupId, String name);
+    void rename(Long groupId, String name);
 }

@@ -129,7 +129,7 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateName(Principal principal, @PathVariable Long id, @RequestBody String requestJson) {
+    public ResponseEntity<?> rename(Principal principal, @PathVariable Long id, @RequestBody String requestJson) {
         User user = userService.findByLogin(principal.getName());
         if (!groupService.isOwner(id, user.getId()))
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -138,7 +138,7 @@ public class GroupController {
         if (name == null)
             return new ResponseEntity<>("Новое имя группы отсутствует", HttpStatus.BAD_REQUEST);
 
-        groupService.updateName(id, name);
+        groupService.rename(id, name);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

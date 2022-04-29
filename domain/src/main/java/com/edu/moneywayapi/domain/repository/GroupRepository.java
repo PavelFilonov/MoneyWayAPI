@@ -22,5 +22,5 @@ public interface GroupRepository {
 
     void addUser(Long groupId, Long userId);
 
-    void updateName(Long groupId, String name);
+    void rename(Long groupId, String name);
 }

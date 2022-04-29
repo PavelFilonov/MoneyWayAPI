@@ -62,7 +62,7 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
-    public void updateName(Long groupId, String name) {
-        jpaGroupRepository.updateName(groupId, name);
+    public void rename(Long groupId, String name) {
+        jpaGroupRepository.rename(groupId, name);
     }
 }
