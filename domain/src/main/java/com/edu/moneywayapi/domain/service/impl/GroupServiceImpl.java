@@ -9,6 +9,8 @@ import com.edu.moneywayapi.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -53,5 +55,32 @@ public class GroupServiceImpl implements GroupService {
     public void deleteUser(Long groupId, String userLogin) {
         User user = userService.findByLogin(userLogin);
         groupRepository.deleteUser(groupId, user.getId());
+    }
+
+    @Override
+    public boolean existsUser(Long groupId, String userLogin) {
+        List<String> logins = groupRepository.getUsers(groupId);
+
+        for (String login : logins) {
+            if (login.equals(userLogin))
+                return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public List<String> getUsers(Long groupId) {
+        return groupRepository.getUsers(groupId);
+    }
+
+    @Override
+    public boolean isOwner(Long groupId, Long userId) {
+        return Objects.equals(groupRepository.getOwnerId(groupId), userId);
+    }
+
+    @Override
+    public void addUser(Long groupId, Long userId) {
+        groupRepository.addUser(groupId, userId);
     }
 }

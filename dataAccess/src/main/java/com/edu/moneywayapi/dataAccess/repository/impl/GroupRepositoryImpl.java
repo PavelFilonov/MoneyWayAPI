@@ -8,6 +8,7 @@ import com.edu.moneywayapi.domain.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -43,5 +44,20 @@ public class GroupRepositoryImpl implements GroupRepository {
     @Override
     public void deleteUser(Long groupId, Long userId) {
         jpaGroupRepository.deleteUser(groupId, userId);
+    }
+
+    @Override
+    public List<String> getUsers(Long groupId) {
+        return jpaGroupRepository.getUsers(groupId);
+    }
+
+    @Override
+    public Long getOwnerId(Long groupId) {
+        return jpaGroupRepository.getOwnerId(groupId);
+    }
+
+    @Override
+    public void addUser(Long groupId, Long userId) {
+        jpaGroupRepository.addUser(groupId, userId);
     }
 }

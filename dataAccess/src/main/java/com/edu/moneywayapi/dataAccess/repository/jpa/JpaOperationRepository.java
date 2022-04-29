@@ -15,7 +15,8 @@ public interface JpaOperationRepository extends JpaRepository<OperationDAL, Long
 
     @Query(value =  "select o.*" +
                     "   from operation o" +
-                    "       join user_category u_c on o.category_id = u_c.category_id and ?1 = u_c.user_id" +
+                    "       join user_category u_c " +
+                    "           on u_c.user_id = ?1 and o.category_id = u_c.category_id" +
                     "   where o.type = ?2 and o.date_operation between ?3 and ?4",
             nativeQuery = true)
     List<OperationDAL> findByUserIdAndTypeOperationAndPeriod(Long userId, String typeOperation,

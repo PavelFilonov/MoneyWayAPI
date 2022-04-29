@@ -114,8 +114,11 @@ public class UserController {
     }
 
     @PutMapping("/users/profile/email")
-    public ResponseEntity<?> updateEmail(Principal principal, @RequestBody String responseJson) {
-        String email = JsonPath.read(responseJson, "$.email");
+    public ResponseEntity<?> updateEmail(Principal principal, @RequestBody String requestJson) {
+        String email = JsonPath.read(requestJson, "$.email");
+
+        if (email == null)
+            return new ResponseEntity<>("Email отсутствует", HttpStatus.BAD_REQUEST);
 
         if (!Pattern.matches(formatEmail, email))
             return new ResponseEntity<>(isEmailNotMatchFormatMessage, HttpStatus.UNPROCESSABLE_ENTITY);
@@ -133,6 +136,9 @@ public class UserController {
     public ResponseEntity<?> updateLogin(Principal principal, @RequestBody String responseJson) {
         String login = JsonPath.read(responseJson, "$.login");
 
+        if (login == null)
+            return new ResponseEntity<>("Логин отсутствует", HttpStatus.BAD_REQUEST);
+
         if (minSizeLogin > login.length() || login.length() > maxSizeLogin)
             return new ResponseEntity<>(isIncorrectSizeLoginMessage, HttpStatus.UNPROCESSABLE_ENTITY);
 
@@ -148,6 +154,9 @@ public class UserController {
     @PutMapping("/users/profile/password")
     public ResponseEntity<?> updatePassword(Principal principal, @RequestBody String responseJson) {
         String password = JsonPath.read(responseJson, "$.password");
+
+        if (password == null)
+            return new ResponseEntity<>("Пароль отсутствует", HttpStatus.BAD_REQUEST);
 
         if (minSizePassword > password.length() || password.length() > maxSizePassword)
             return new ResponseEntity<>(isIncorrectSizePasswordMessage, HttpStatus.UNPROCESSABLE_ENTITY);
