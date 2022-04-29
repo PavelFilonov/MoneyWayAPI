@@ -10,4 +10,12 @@ public interface CategoryRepository {
     void deleteById(Long id);
 
     Optional<Category> findById(Long id);
+
+    boolean existsById(Long id);
+
+    void rename(Long id, String name);
+
+    void saveToUser(Long categoryId, Long userId);
+
+    void saveToGroup(Long categoryId, Long groupId);
 }

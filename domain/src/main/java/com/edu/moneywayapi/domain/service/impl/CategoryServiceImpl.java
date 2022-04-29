@@ -22,7 +22,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteById(Long id) {
-        findById(id);
         categoryRepository.deleteById(id);
     }
 
@@ -32,5 +31,25 @@ public class CategoryServiceImpl implements CategoryService {
         if (category.isEmpty())
             throw new NoSuchCategoryException(String.format("The category with id %s was not found", id));
         return category.get();
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return categoryRepository.existsById(id);
+    }
+
+    @Override
+    public void rename(Long id, String name) {
+        categoryRepository.rename(id, name);
+    }
+
+    @Override
+    public void saveToUser(Long categoryId, Long userId) {
+        categoryRepository.saveToUser(categoryId, userId);
+    }
+
+    @Override
+    public void saveToGroup(Long categoryId, Long groupId) {
+        categoryRepository.saveToGroup(categoryId, groupId);
     }
 }

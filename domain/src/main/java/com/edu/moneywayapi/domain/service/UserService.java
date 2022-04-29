@@ -20,6 +20,8 @@ public interface UserService extends UserDetailsService {
 
     boolean existsByEmail(String email);
 
+    boolean existsCategory(String userLogin, Long categoryId);
+
     void deleteById(Long id);
 
     void updateEmail(String email, Long id);

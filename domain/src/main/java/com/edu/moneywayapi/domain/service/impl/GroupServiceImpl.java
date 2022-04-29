@@ -1,5 +1,6 @@
 package com.edu.moneywayapi.domain.service.impl;
 
+import com.edu.moneywayapi.domain.entity.Category;
 import com.edu.moneywayapi.domain.entity.Group;
 import com.edu.moneywayapi.domain.entity.User;
 import com.edu.moneywayapi.domain.exception.NoSuchGroupException;
@@ -44,6 +45,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public boolean existsById(Long id) {
+        return groupRepository.existsById(id);
+    }
+
+    @Override
     public Group findByToken(String token) {
         Group group = groupRepository.findByToken(token);
         if (group == null)
@@ -77,6 +83,19 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public boolean isOwner(Long groupId, Long userId) {
         return Objects.equals(groupRepository.getOwnerId(groupId), userId);
+    }
+
+    @Override
+    public boolean existsCategory(Long groupId, Long categoryId) {
+        Group group = findById(groupId);
+        List<Category> categories = group.getCategories();
+
+        for (Category category : categories) {
+            if (Objects.equals(category.getId(), categoryId))
+                return true;
+        }
+
+        return false;
     }
 
     @Override

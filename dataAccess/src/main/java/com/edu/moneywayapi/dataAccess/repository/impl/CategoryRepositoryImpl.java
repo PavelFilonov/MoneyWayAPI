@@ -34,4 +34,24 @@ public class CategoryRepositoryImpl implements CategoryRepository {
         CategoryDAL categoryDAL = jpaCategoryRepository.findById(id).orElse(null);
         return Optional.ofNullable(categoryDALMapper.map(categoryDAL));
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return jpaCategoryRepository.existsById(id);
+    }
+
+    @Override
+    public void rename(Long id, String name) {
+        jpaCategoryRepository.rename(id, name);
+    }
+
+    @Override
+    public void saveToUser(Long categoryId, Long userId) {
+        jpaCategoryRepository.saveToUser(categoryId, userId);
+    }
+
+    @Override
+    public void saveToGroup(Long categoryId, Long groupId) {
+        jpaCategoryRepository.saveToGroup(categoryId, groupId);
+    }
 }

@@ -65,4 +65,9 @@ public class GroupRepositoryImpl implements GroupRepository {
     public void rename(Long groupId, String name) {
         jpaGroupRepository.rename(groupId, name);
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return jpaGroupRepository.existsById(id);
+    }
 }

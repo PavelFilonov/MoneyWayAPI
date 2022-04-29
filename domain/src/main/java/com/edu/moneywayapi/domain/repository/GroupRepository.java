@@ -23,4 +23,6 @@ public interface GroupRepository {
     void addUser(Long groupId, Long userId);
 
     void rename(Long groupId, String name);
+
+    boolean existsById(Long id);
 }

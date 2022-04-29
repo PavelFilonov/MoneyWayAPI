@@ -11,6 +11,8 @@ public interface GroupService {
 
     void deleteById(Long id);
 
+    boolean existsById(Long id);
+
     Group findByToken(String token);
 
     void deleteUser(Long groupId, String userLogin);
@@ -20,6 +22,8 @@ public interface GroupService {
     List<String> getUsers(Long groupId);
 
     boolean isOwner(Long groupId, Long userId);
+
+    boolean existsCategory(Long groupId, Long categoryId);
 
     void addUser(Long groupId, Long userId);
 

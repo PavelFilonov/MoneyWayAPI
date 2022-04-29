@@ -1,5 +1,6 @@
 package com.edu.moneywayapi.domain.service.impl;
 
+import com.edu.moneywayapi.domain.entity.Category;
 import com.edu.moneywayapi.domain.entity.User;
 import com.edu.moneywayapi.domain.exception.NoSuchUserException;
 import com.edu.moneywayapi.domain.repository.UserRepository;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -54,6 +57,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsCategory(String userLogin, Long categoryId) {
+        User user = findByLogin(userLogin);
+        List<Category> categories = user.getCategories();
+
+        for (Category category : categories) {
+            if (Objects.equals(category.getId(), categoryId))
+                return true;
+        }
+
+        return false;
     }
 
     @Override
