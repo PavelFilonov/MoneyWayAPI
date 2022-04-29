@@ -67,9 +67,12 @@ public class UserController {
         if (userFromDb == null)
             return new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND);
 
-        Authentication authObject = authenticationManager.authenticate(
+        if (!passwordEncoder.matches(user.getPassword(), userFromDb.getPassword()))
+            return new ResponseEntity<>("Неверный пароль", HttpStatus.CONFLICT);
+
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userFromDb.getLogin(), user.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authObject);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -101,7 +104,6 @@ public class UserController {
 
     @GetMapping("/users/profile")
     public ResponseEntity<?> get(Principal principal) {
-        System.out.println(principal.getName());
         UserDTO user = userDTOMapper.map(userService.findByLogin(principal.getName()));
 
         return new ResponseEntity<>(
