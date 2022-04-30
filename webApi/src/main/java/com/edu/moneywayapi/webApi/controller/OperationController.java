@@ -7,10 +7,10 @@ import com.edu.moneywayapi.domain.service.UserService;
 import com.edu.moneywayapi.webApi.context.OperationRequestContext;
 import com.edu.moneywayapi.webApi.dto.OperationDTO;
 import com.edu.moneywayapi.webApi.dto.UserDTO;
-import com.edu.moneywayapi.webApi.mapper.CategoryDTOMapper;
 import com.edu.moneywayapi.webApi.mapper.OperationDTOMapper;
 import com.edu.moneywayapi.webApi.mapper.UserDTOMapper;
 import com.edu.moneywayapi.webApi.validator.OperationValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/operations")
+@Slf4j
 public class OperationController {
 
     private final OperationService operationService;
@@ -41,26 +42,33 @@ public class OperationController {
 
     @PostMapping
     public ResponseEntity<?> add(Principal principal, @RequestBody OperationDTO operation) {
+        log.debug("Успешное подключение к post /operations");
+
         ValidationResult validationResult = operationValidator.validate(operation);
-        if (!validationResult.isValid())
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        if (!validationResult.isValid()) {
+            log.warn("Невалидная операция: " + validationResult.getErrors());
+            return new ResponseEntity<>(validationResult.getErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
 
         UserDTO userDTO = userDTOMapper.map(userService.findByLogin(principal.getName()));
         operation.setUserDTO(userDTO);
         operationService.save(operationDTOMapper.map(operation));
+        log.info("Операция успешно добавлена");
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<?> getByCategoryAndPeriod(@RequestBody OperationRequestContext operationRequestContext) {
-        List<Operation> operations;
+        log.debug("Успешное подключение к get /operations");
 
+        List<Operation> operations;
         try {
             operations = operationService.findByCategoryAndPeriod(
                     operationRequestContext.getCategoryId(),
                     operationRequestContext.getFromDate(), operationRequestContext.getToDate());
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+            log.warn(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         return operations != null && !operations.isEmpty()
