@@ -8,16 +8,20 @@ import com.edu.moneywayapi.domain.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
 public class GroupRepositoryImpl implements GroupRepository {
 
-    @Autowired
-    private JpaGroupRepository jpaGroupRepository;
+    private final JpaGroupRepository jpaGroupRepository;
+    private final GroupDALMapper groupDALMapper;
 
     @Autowired
-    private GroupDALMapper groupDALMapper;
+    public GroupRepositoryImpl(JpaGroupRepository jpaGroupRepository, GroupDALMapper groupDALMapper) {
+        this.jpaGroupRepository = jpaGroupRepository;
+        this.groupDALMapper = groupDALMapper;
+    }
 
     @Override
     public Group save(Group group) {
@@ -41,7 +45,32 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
-    public void deleteUser(Long userId) {
-        jpaGroupRepository.deleteUser(userId);
+    public void deleteUser(Long groupId, Long userId) {
+        jpaGroupRepository.deleteUser(groupId, userId);
+    }
+
+    @Override
+    public List<String> getUsers(Long groupId) {
+        return jpaGroupRepository.getUsers(groupId);
+    }
+
+    @Override
+    public Long getOwnerId(Long groupId) {
+        return jpaGroupRepository.getOwnerId(groupId);
+    }
+
+    @Override
+    public void addUser(Long groupId, Long userId) {
+        jpaGroupRepository.addUser(groupId, userId);
+    }
+
+    @Override
+    public void rename(Long groupId, String name) {
+        jpaGroupRepository.rename(groupId, name);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return jpaGroupRepository.existsById(id);
     }
 }

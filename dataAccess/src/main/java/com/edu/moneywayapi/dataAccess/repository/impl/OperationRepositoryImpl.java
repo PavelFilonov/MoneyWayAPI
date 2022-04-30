@@ -3,7 +3,6 @@ package com.edu.moneywayapi.dataAccess.repository.impl;
 import com.edu.moneywayapi.dataAccess.mapper.CategoryDALMapper;
 import com.edu.moneywayapi.dataAccess.mapper.OperationDALMapper;
 import com.edu.moneywayapi.dataAccess.repository.jpa.JpaOperationRepository;
-import com.edu.moneywayapi.domain.entity.Category;
 import com.edu.moneywayapi.domain.entity.Operation;
 import com.edu.moneywayapi.domain.repository.OperationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +14,13 @@ import java.util.List;
 @Component
 public class OperationRepositoryImpl implements OperationRepository {
 
-    @Autowired
-    private JpaOperationRepository jpaOperationRepository;
+    private final JpaOperationRepository jpaOperationRepository;
+    private final OperationDALMapper operationDALMapper;
 
     @Autowired
-    private OperationDALMapper operationDALMapper;
-    @Autowired
-    private CategoryDALMapper categoryDALMapper;
-
-    @Override
-    public List<Operation> findByCategory(Category category) {
-        return operationDALMapper.mapListToEntity(jpaOperationRepository.findByCategoryDAL(categoryDALMapper.map(category)));
+    public OperationRepositoryImpl(JpaOperationRepository jpaOperationRepository, OperationDALMapper operationDALMapper) {
+        this.jpaOperationRepository = jpaOperationRepository;
+        this.operationDALMapper = operationDALMapper;
     }
 
     @Override
@@ -34,9 +29,8 @@ public class OperationRepositoryImpl implements OperationRepository {
     }
 
     @Override
-    public List<Operation> findByUserIdAndTypeOperationAndPeriod(Long userId, String typeOperation,
-                                                                 LocalDateTime fromDate, LocalDateTime toDate) {
-        return operationDALMapper.mapListToEntity(jpaOperationRepository.findByUserIdAndTypeOperationAndPeriod(
-                userId, typeOperation, fromDate, toDate));
+    public List<Operation> findByCategoryAndPeriod(Long categoryId, LocalDateTime fromDate, LocalDateTime toDate) {
+        return operationDALMapper.mapListToEntity(jpaOperationRepository.findByCategoryAndPeriod(
+                categoryId, fromDate, toDate));
     }
 }

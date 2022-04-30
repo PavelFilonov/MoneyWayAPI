@@ -72,13 +72,13 @@ public class OperationValidator extends AbstractValidator<OperationDTO> {
                 .withFieldName("value")
                 .critical();
 
-        ruleFor(OperationDTO::getDateOperation)
+        ruleFor(OperationDTO::getCreatedAt)
                 .must(not(stringEmptyOrNull()))
                 .withMessage(isDateOperationEmptyMessage)
                 .withFieldName("dateOperation")
                 .critical();
 
-        ruleFor(OperationDTO::getDateOperation)
+        ruleFor(OperationDTO::getCreatedAt)
                 .must(isDateTime(formatDateTime))
                 .withMessage(isDateOperationNotDateTimeMessage)
                 .withFieldName("dateOperation")

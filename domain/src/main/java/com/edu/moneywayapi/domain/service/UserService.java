@@ -18,9 +18,17 @@ public interface UserService extends UserDetailsService {
 
     boolean existsByLogin(String login);
 
+    boolean existsByEmail(String email);
+
+    boolean existsCategory(String userLogin, Long categoryId);
+
     void deleteById(Long id);
 
-    void update(User user, Long id);
+    void updateEmail(String email, Long id);
+
+    void updateLogin(String login, Long id);
+
+    void updatePassword(String password, Long id);
 
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 }

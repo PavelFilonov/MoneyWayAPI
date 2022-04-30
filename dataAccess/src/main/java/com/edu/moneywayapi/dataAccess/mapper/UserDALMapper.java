@@ -9,11 +9,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserDALMapper implements UserMapper<UserDAL> {
 
-    @Autowired
-    private GroupDALMapper groupDALMapper;
+    private final GroupDALMapper groupDALMapper;
+    private final CategoryDALMapper categoryDALMapper;
 
     @Autowired
-    private CategoryDALMapper categoryDALMapper;
+    public UserDALMapper(GroupDALMapper groupDALMapper, CategoryDALMapper categoryDALMapper) {
+        this.groupDALMapper = groupDALMapper;
+        this.categoryDALMapper = categoryDALMapper;
+    }
 
     @Override
     public UserDAL map(User user) {

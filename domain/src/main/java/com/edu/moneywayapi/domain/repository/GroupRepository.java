@@ -2,6 +2,7 @@ package com.edu.moneywayapi.domain.repository;
 
 import com.edu.moneywayapi.domain.entity.Group;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface GroupRepository {
@@ -13,5 +14,15 @@ public interface GroupRepository {
 
     Group findByToken(String token);
 
-    void deleteUser(Long userId);
+    void deleteUser(Long groupId, Long userId);
+
+    List<String> getUsers(Long groupId);
+
+    Long getOwnerId(Long groupId);
+
+    void addUser(Long groupId, Long userId);
+
+    void rename(Long groupId, String name);
+
+    boolean existsById(Long id);
 }

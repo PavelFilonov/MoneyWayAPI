@@ -14,6 +14,7 @@ public class OperationDTO {
     private Long id;
     private TypeOperation type;
     private CategoryDTO categoryDTO;
+    private UserDTO userDTO;
     private String value;
-    private String dateOperation;
+    private String createdAt;
 }

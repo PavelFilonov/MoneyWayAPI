@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface JpaUserRepository extends JpaRepository<UserDAL, Long> {
@@ -14,13 +15,29 @@ public interface JpaUserRepository extends JpaRepository<UserDAL, Long> {
 
     boolean existsByLogin(String login);
 
+    boolean existsByEmail(String email);
+
+    @Transactional
     @Modifying
-    @Query(value =  "update user1 u" +
-                    "set " +
-                        "u.email = ?1,   " +
-                        "u.login = ?2,   " +
-                        "u.password = ?3 " +
-                    "where u.id = ?4",
+    @Query(value =  "update user1   " +
+                    "set email = ?1 " +
+                    "where id = ?2  ",
             nativeQuery = true)
-    void update(String email, String login, String password, Long id);
+    void updateEmail(String email, Long id);
+
+    @Transactional
+    @Modifying
+    @Query(value =  "update user1   " +
+                    "set login = ?1 " +
+                    "where id = ?2  ",
+            nativeQuery = true)
+    void updateLogin(String login, Long id);
+
+    @Transactional
+    @Modifying
+    @Query(value =  "update user1      " +
+                    "set password = ?1 " +
+                    "where id = ?2     ",
+            nativeQuery = true)
+    void updatePassword(String password, Long id);
 }

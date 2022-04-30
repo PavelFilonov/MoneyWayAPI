@@ -12,8 +12,12 @@ import java.util.List;
 @Component
 public class GroupDALMapper implements GroupMapper<GroupDAL> {
 
+    private final CategoryDALMapper categoryDALMapper;
+
     @Autowired
-    private CategoryDALMapper categoryDALMapper;
+    public GroupDALMapper(CategoryDALMapper categoryDALMapper) {
+        this.categoryDALMapper = categoryDALMapper;
+    }
 
     @Override
     public GroupDAL map(Group group) {
