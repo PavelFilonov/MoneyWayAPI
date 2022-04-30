@@ -1,67 +1,70 @@
 package com.edu.moneywayapi.webApi.controller;
 
 import br.com.fluentvalidator.context.ValidationResult;
-import com.edu.moneywayapi.domain.entity.TypeOperation;
+import com.edu.moneywayapi.domain.entity.Operation;
 import com.edu.moneywayapi.domain.service.OperationService;
-import com.edu.moneywayapi.webApi.dto.CategoryDTO;
+import com.edu.moneywayapi.domain.service.UserService;
+import com.edu.moneywayapi.webApi.context.OperationRequestContext;
 import com.edu.moneywayapi.webApi.dto.OperationDTO;
+import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.CategoryDTOMapper;
 import com.edu.moneywayapi.webApi.mapper.OperationDTOMapper;
+import com.edu.moneywayapi.webApi.mapper.UserDTOMapper;
 import com.edu.moneywayapi.webApi.validator.OperationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/operation")
+@RequestMapping(value = "/operations")
 public class OperationController {
 
-    @Autowired
-    private OperationService operationService;
+    private final OperationService operationService;
+    private final OperationValidator operationValidator;
+    private final OperationDTOMapper operationDTOMapper;
+    private final UserService userService;
+    private final UserDTOMapper userDTOMapper;
 
     @Autowired
-    private OperationValidator operationValidator;
-
-    @Autowired
-    private OperationDTOMapper operationDALMapper;
-    @Autowired
-    private CategoryDTOMapper categoryDTOMapper;
-
-    @GetMapping
-    public ResponseEntity<?> getByCategory(@RequestBody CategoryDTO category) {
-        List<OperationDTO> operations = operationDALMapper.mapListToDTO(
-                operationService.findByCategory(categoryDTOMapper.map(category)));
-
-        return operations != null && !operations.isEmpty()
-                ? new ResponseEntity<>(operations, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public OperationController(OperationService operationService, OperationValidator operationValidator,
+                               OperationDTOMapper operationDTOMapper, UserService userService, UserDTOMapper userDTOMapper) {
+        this.operationService = operationService;
+        this.operationValidator = operationValidator;
+        this.operationDTOMapper = operationDTOMapper;
+        this.userService = userService;
+        this.userDTOMapper = userDTOMapper;
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@RequestBody OperationDTO operation) {
+    public ResponseEntity<?> add(Principal principal, @RequestBody OperationDTO operation) {
         ValidationResult validationResult = operationValidator.validate(operation);
         if (!validationResult.isValid())
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
 
-        operationService.save(operationDALMapper.map(operation));
+        UserDTO userDTO = userDTOMapper.map(userService.findByLogin(principal.getName()));
+        operation.setUserDTO(userDTO);
+        operationService.save(operationDTOMapper.map(operation));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("{userId}")
-    public ResponseEntity<?> getByUserIdAndTypeOperationAndPeriod(@PathVariable(name = "userId") Long userId,
-                                                                  @RequestBody TypeOperation typeOperation,
-                                                                  @RequestBody LocalDateTime fromDate,
-                                                                  @RequestBody LocalDateTime toDate) {
+    @GetMapping
+    public ResponseEntity<?> getByCategoryAndPeriod(@RequestBody OperationRequestContext operationRequestContext) {
+        List<Operation> operations;
+
         try {
-            List<OperationDTO> operations = operationDALMapper.mapListToDTO(
-                    operationService.findByUserIdAndTypeOperationAndPeriod(userId, typeOperation, fromDate, toDate));
-            return new ResponseEntity<>(operations, HttpStatus.OK);
+            operations = operationService.findByCategoryAndPeriod(
+                    operationRequestContext.getCategoryId(),
+                    operationRequestContext.getFromDate(), operationRequestContext.getToDate());
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
+
+        return operations != null && !operations.isEmpty()
+                ? new ResponseEntity<>(operations, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

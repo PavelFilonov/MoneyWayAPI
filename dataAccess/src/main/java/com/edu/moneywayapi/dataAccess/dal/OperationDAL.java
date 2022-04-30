@@ -27,9 +27,13 @@ public class OperationDAL {
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryDAL categoryDAL;
 
+    @ManyToOne()
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserDAL userDAL;
+
     @Column(nullable = false)
     private String value;
 
     @Column(name = "date_operation", nullable = false)
-    private LocalDateTime dateOperation;
+    private LocalDateTime createdAt;
 }

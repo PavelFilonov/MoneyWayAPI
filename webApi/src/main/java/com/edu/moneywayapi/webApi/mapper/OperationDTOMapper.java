@@ -13,8 +13,14 @@ import java.util.List;
 @Component
 public class OperationDTOMapper implements OperationMapper<OperationDTO> {
 
+    private final CategoryDTOMapper categoryDTOMapper;
+    private final UserDTOMapper userDTOMapper;
+
     @Autowired
-    private CategoryDTOMapper categoryDTOMapper;
+    public OperationDTOMapper(CategoryDTOMapper categoryDTOMapper, UserDTOMapper userDTOMapper) {
+        this.categoryDTOMapper = categoryDTOMapper;
+        this.userDTOMapper = userDTOMapper;
+    }
 
     @Override
     public OperationDTO map(Operation operation) {
@@ -25,8 +31,9 @@ public class OperationDTOMapper implements OperationMapper<OperationDTO> {
                 .id(operation.getId())
                 .type(operation.getType())
                 .categoryDTO(categoryDTOMapper.map(operation.getCategory()))
+                .userDTO(userDTOMapper.map(operation.getUser()))
                 .value(operation.getValue())
-                .dateOperation(operation.getDateOperation().toString())
+                .createdAt(operation.getCreatedAt().toString())
                 .build();
     }
 
@@ -39,8 +46,9 @@ public class OperationDTOMapper implements OperationMapper<OperationDTO> {
                 .id(obj.getId())
                 .type(obj.getType())
                 .category(categoryDTOMapper.map(obj.getCategoryDTO()))
+                .user(userDTOMapper.map(obj.getUserDTO()))
                 .value(obj.getValue())
-                .dateOperation(LocalDateTime.parse(obj.getDateOperation()))
+                .createdAt(LocalDateTime.parse(obj.getCreatedAt()))
                 .build();
     }
 

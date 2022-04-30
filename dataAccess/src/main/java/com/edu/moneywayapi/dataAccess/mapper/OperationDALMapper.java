@@ -12,8 +12,14 @@ import java.util.List;
 @Component
 public class OperationDALMapper implements OperationMapper<OperationDAL> {
 
+    private final CategoryDALMapper categoryDALMapper;
+    private final UserDALMapper userDALMapper;
+
     @Autowired
-    private CategoryDALMapper categoryDALMapper;
+    public OperationDALMapper(CategoryDALMapper categoryDALMapper, UserDALMapper userDALMapper) {
+        this.categoryDALMapper = categoryDALMapper;
+        this.userDALMapper = userDALMapper;
+    }
 
     @Override
     public OperationDAL map(Operation operation) {
@@ -24,8 +30,9 @@ public class OperationDALMapper implements OperationMapper<OperationDAL> {
                 .id(operation.getId())
                 .type(operation.getType())
                 .categoryDAL(categoryDALMapper.map(operation.getCategory()))
+                .userDAL(userDALMapper.map(operation.getUser()))
                 .value(operation.getValue())
-                .dateOperation(operation.getDateOperation())
+                .createdAt(operation.getCreatedAt())
                 .build();
     }
 
@@ -38,8 +45,9 @@ public class OperationDALMapper implements OperationMapper<OperationDAL> {
                 .id(obj.getId())
                 .type(obj.getType())
                 .category(categoryDALMapper.map(obj.getCategoryDAL()))
+                .user(userDALMapper.map(obj.getUserDAL()))
                 .value(obj.getValue())
-                .dateOperation(obj.getDateOperation())
+                .createdAt(obj.getCreatedAt())
                 .build();
     }
 

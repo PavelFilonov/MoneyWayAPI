@@ -3,7 +3,6 @@ package com.edu.moneywayapi.dataAccess.repository.impl;
 import com.edu.moneywayapi.dataAccess.mapper.CategoryDALMapper;
 import com.edu.moneywayapi.dataAccess.mapper.OperationDALMapper;
 import com.edu.moneywayapi.dataAccess.repository.jpa.JpaOperationRepository;
-import com.edu.moneywayapi.domain.entity.Category;
 import com.edu.moneywayapi.domain.entity.Operation;
 import com.edu.moneywayapi.domain.repository.OperationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +23,13 @@ public class OperationRepositoryImpl implements OperationRepository {
     private CategoryDALMapper categoryDALMapper;
 
     @Override
-    public List<Operation> findByCategory(Category category) {
-        return operationDALMapper.mapListToEntity(jpaOperationRepository.findByCategoryDAL(categoryDALMapper.map(category)));
-    }
-
-    @Override
     public Operation save(Operation operation) {
         return operationDALMapper.map(jpaOperationRepository.save(operationDALMapper.map(operation)));
     }
 
     @Override
-    public List<Operation> findByUserIdAndTypeOperationAndPeriod(Long userId, String typeOperation,
-                                                                 LocalDateTime fromDate, LocalDateTime toDate) {
-        return operationDALMapper.mapListToEntity(jpaOperationRepository.findByUserIdAndTypeOperationAndPeriod(
-                userId, typeOperation, fromDate, toDate));
+    public List<Operation> findByCategoryAndPeriod(Long categoryId, LocalDateTime fromDate, LocalDateTime toDate) {
+        return operationDALMapper.mapListToEntity(jpaOperationRepository.findByCategoryAndPeriod(
+                categoryId, fromDate, toDate));
     }
 }
