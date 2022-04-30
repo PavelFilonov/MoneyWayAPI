@@ -9,6 +9,7 @@ import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.OperationDTOMapper;
 import com.edu.moneywayapi.webApi.mapper.UserDTOMapper;
 import com.edu.moneywayapi.webApi.validator.OperationValidator;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/operations")
 @Slf4j
+@Api(description = "Маршруты для денежных операций",
+        tags = {"Operation"})
 public class OperationController {
 
     private final OperationService operationService;
@@ -39,8 +42,12 @@ public class OperationController {
         this.userDTOMapper = userDTOMapper;
     }
 
+    @ApiOperation(value = "Добавление операции", tags = {"Operation"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 422, message = "Невалидная операция. Возвращается список ошибок валидации."),
+            @ApiResponse(code = 201, message = "Операция добавлена")})
     @PostMapping
-    public ResponseEntity<?> add(Principal principal, @RequestBody OperationDTO operation) {
+    public ResponseEntity<?> add(Principal principal, @ApiParam("Добавляемая операция") @RequestBody OperationDTO operation) {
         log.debug("Успешное подключение к post /operations");
 
         ValidationResult validationResult = operationValidator.validate(operation);
@@ -56,8 +63,13 @@ public class OperationController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Получение операций по категории и периоду", tags = {"Operation"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 422, message = "Невалидны данные. Возвращается информация об ошибке."),
+            @ApiResponse(code = 200, message = "Операции получены. Возвращается список операций"),
+            @ApiResponse(code = 400, message = "Операции не найдены")})
     @GetMapping
-    public ResponseEntity<?> getByCategoryAndPeriod(@RequestBody OperationRequestContext operationRequestContext) {
+    public ResponseEntity<?> getByCategoryAndPeriod(@ApiParam("Контекст запроса операций") @RequestBody OperationRequestContext operationRequestContext) {
         log.debug("Успешное подключение к get /operations");
 
         List<OperationDTO> operations;

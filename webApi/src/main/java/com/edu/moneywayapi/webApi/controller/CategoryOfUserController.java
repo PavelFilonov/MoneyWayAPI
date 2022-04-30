@@ -8,6 +8,7 @@ import com.edu.moneywayapi.domain.service.UserService;
 import com.edu.moneywayapi.webApi.dto.CategoryDTO;
 import com.edu.moneywayapi.webApi.mapper.CategoryDTOMapper;
 import com.edu.moneywayapi.webApi.validator.CategoryValidator;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/categories")
 @Slf4j
+@Api(description = "Маршруты для категорий пользователя",
+        tags = {"Category"})
 public class CategoryOfUserController {
 
     private final CategoryService categoryService;
@@ -34,6 +37,10 @@ public class CategoryOfUserController {
         this.userService = userService;
     }
 
+    @ApiOperation(value = "Получение списка категорий пользователя", tags = {"Category"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Категории получены. Возвращается список категорий."),
+            @ApiResponse(code = 404, message = "Категории не найдены")})
     @GetMapping
     public ResponseEntity<?> get(Principal principal) {
         log.debug("Успешное подключение к get /categories");
@@ -45,8 +52,12 @@ public class CategoryOfUserController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @ApiOperation(value = "Удаление категории пользователя", tags = {"Category"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Категория не найдена"),
+            @ApiResponse(code = 200, message = "Категория удалена")})
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(Principal principal, @PathVariable Long id) {
+    public ResponseEntity<?> delete(Principal principal, @ApiParam("Id категории") @PathVariable Long id) {
         log.debug(String.format("Успешное подключение к delete /categories/%s", id));
 
         if (!userService.existsCategory(principal.getName(), id)) {
@@ -59,8 +70,13 @@ public class CategoryOfUserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Переименование категории пользователя", tags = {"Category"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Категория не найдена"),
+            @ApiResponse(code = 200, message = "Категория переименована")})
     @PutMapping("/{id}")
-    public ResponseEntity<?> rename(Principal principal, @PathVariable Long id, @RequestParam String name) {
+    public ResponseEntity<?> rename(Principal principal, @ApiParam("Id категории") @PathVariable Long id,
+                                    @ApiParam("Новое название категории") @RequestParam String name) {
         log.debug(String.format("Успешное подключение к put /categories/%s", id));
 
         if (!userService.existsCategory(principal.getName(), id)) {
@@ -73,8 +89,12 @@ public class CategoryOfUserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Добавление категории пользователя", tags = {"Category"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 422, message = "Невалидная категория. Возвращается список ошибок валидации"),
+            @ApiResponse(code = 201, message = "Категория добавлена")})
     @PostMapping
-    public ResponseEntity<?> add(Principal principal, @RequestBody CategoryDTO category) {
+    public ResponseEntity<?> add(Principal principal, @ApiParam("Добавляемая категория") @RequestBody CategoryDTO category) {
         log.debug("Успешное подключение к post /categories");
 
         ValidationResult validationResult = categoryValidator.validate(category);
