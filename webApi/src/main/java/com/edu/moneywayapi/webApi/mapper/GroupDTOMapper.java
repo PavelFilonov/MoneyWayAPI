@@ -12,8 +12,12 @@ import java.util.List;
 @Component
 public class GroupDTOMapper implements GroupMapper<GroupDTO> {
 
+    private final CategoryDTOMapper categoryDTOMapper;
+
     @Autowired
-    private CategoryDTOMapper categoryDTOMapper;
+    public GroupDTOMapper(CategoryDTOMapper categoryDTOMapper) {
+        this.categoryDTOMapper = categoryDTOMapper;
+    }
 
     @Override
     public GroupDTO map(Group group) {

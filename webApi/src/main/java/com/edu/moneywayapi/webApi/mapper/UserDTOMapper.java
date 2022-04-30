@@ -9,11 +9,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserDTOMapper implements UserMapper<UserDTO> {
 
-    @Autowired
-    private GroupDTOMapper groupDTOMapper;
+    private final GroupDTOMapper groupDTOMapper;
+    private final CategoryDTOMapper categoryDTOMapper;
 
     @Autowired
-    private CategoryDTOMapper categoryDTOMapper;
+    public UserDTOMapper(GroupDTOMapper groupDTOMapper, CategoryDTOMapper categoryDTOMapper) {
+        this.groupDTOMapper = groupDTOMapper;
+        this.categoryDTOMapper = categoryDTOMapper;
+    }
 
     @Override
     public UserDTO map(User user) {

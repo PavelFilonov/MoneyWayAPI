@@ -13,11 +13,14 @@ import java.util.Optional;
 @Component
 public class UserRepositoryImpl implements UserRepository {
 
-    @Autowired
-    private JpaUserRepository jpaUserRepository;
+    private final JpaUserRepository jpaUserRepository;
+    private final UserDALMapper userDALMapper;
 
     @Autowired
-    private UserDALMapper userDALMapper;
+    public UserRepositoryImpl(JpaUserRepository jpaUserRepository, UserDALMapper userDALMapper) {
+        this.jpaUserRepository = jpaUserRepository;
+        this.userDALMapper = userDALMapper;
+    }
 
     @Override
     public Optional<User> findById(Long id) {

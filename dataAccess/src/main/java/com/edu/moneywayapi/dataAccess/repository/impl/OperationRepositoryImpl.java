@@ -14,13 +14,14 @@ import java.util.List;
 @Component
 public class OperationRepositoryImpl implements OperationRepository {
 
-    @Autowired
-    private JpaOperationRepository jpaOperationRepository;
+    private final JpaOperationRepository jpaOperationRepository;
+    private final OperationDALMapper operationDALMapper;
 
     @Autowired
-    private OperationDALMapper operationDALMapper;
-    @Autowired
-    private CategoryDALMapper categoryDALMapper;
+    public OperationRepositoryImpl(JpaOperationRepository jpaOperationRepository, OperationDALMapper operationDALMapper) {
+        this.jpaOperationRepository = jpaOperationRepository;
+        this.operationDALMapper = operationDALMapper;
+    }
 
     @Override
     public Operation save(Operation operation) {

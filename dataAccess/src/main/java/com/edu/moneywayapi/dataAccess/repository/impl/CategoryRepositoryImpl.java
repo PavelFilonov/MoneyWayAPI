@@ -13,11 +13,14 @@ import java.util.Optional;
 @Component
 public class CategoryRepositoryImpl implements CategoryRepository {
 
-    @Autowired
-    private JpaCategoryRepository jpaCategoryRepository;
+    private final JpaCategoryRepository jpaCategoryRepository;
+    private final CategoryDALMapper categoryDALMapper;
 
     @Autowired
-    private CategoryDALMapper categoryDALMapper;
+    public CategoryRepositoryImpl(JpaCategoryRepository jpaCategoryRepository, CategoryDALMapper categoryDALMapper) {
+        this.jpaCategoryRepository = jpaCategoryRepository;
+        this.categoryDALMapper = categoryDALMapper;
+    }
 
     @Override
     public Category save(Category category) {

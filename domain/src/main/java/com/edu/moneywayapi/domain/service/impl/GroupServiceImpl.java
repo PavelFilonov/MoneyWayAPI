@@ -18,11 +18,14 @@ import java.util.UUID;
 @Service
 public class GroupServiceImpl implements GroupService {
 
-    @Autowired
-    private GroupRepository groupRepository;
+    private final GroupRepository groupRepository;
+    private final UserService userService;
 
     @Autowired
-    private UserService userService;
+    public GroupServiceImpl(GroupRepository groupRepository, UserService userService) {
+        this.groupRepository = groupRepository;
+        this.userService = userService;
+    }
 
     @Override
     public Group save(Group group) {

@@ -14,11 +14,14 @@ import java.util.Optional;
 @Component
 public class GroupRepositoryImpl implements GroupRepository {
 
-    @Autowired
-    private JpaGroupRepository jpaGroupRepository;
+    private final JpaGroupRepository jpaGroupRepository;
+    private final GroupDALMapper groupDALMapper;
 
     @Autowired
-    private GroupDALMapper groupDALMapper;
+    public GroupRepositoryImpl(JpaGroupRepository jpaGroupRepository, GroupDALMapper groupDALMapper) {
+        this.jpaGroupRepository = jpaGroupRepository;
+        this.groupDALMapper = groupDALMapper;
+    }
 
     @Override
     public Group save(Group group) {

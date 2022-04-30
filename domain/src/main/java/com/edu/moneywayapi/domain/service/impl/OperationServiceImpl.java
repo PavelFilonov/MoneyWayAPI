@@ -4,23 +4,21 @@ import com.edu.moneywayapi.domain.entity.Operation;
 import com.edu.moneywayapi.domain.exception.InvalidPeriodException;
 import com.edu.moneywayapi.domain.repository.OperationRepository;
 import com.edu.moneywayapi.domain.service.OperationService;
-import com.edu.moneywayapi.domain.service.UserService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@AllArgsConstructor
 @Service
 public class OperationServiceImpl implements OperationService {
 
-    @Autowired
-    private OperationRepository operationRepository;
+    private final OperationRepository operationRepository;
 
     @Autowired
-    private UserService userService;
+    public OperationServiceImpl(OperationRepository operationRepository) {
+        this.operationRepository = operationRepository;
+    }
 
     @Override
     public Operation save(Operation operation) {
