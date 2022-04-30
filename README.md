@@ -1,4 +1,4 @@
-RESTful сервис приложения MoneyWay
+Серверная часть приложения MoneyWay
 
 <hr>
 
