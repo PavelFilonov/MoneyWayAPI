@@ -8,6 +8,7 @@ import com.edu.moneywayapi.domain.service.UserService;
 import com.edu.moneywayapi.webApi.dto.GroupDTO;
 import com.edu.moneywayapi.webApi.mapper.GroupDTOMapper;
 import com.edu.moneywayapi.webApi.validator.GroupValidator;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/groups")
 @Slf4j
+@Api(description = "Маршруты для групп",
+        tags = {"Group"})
 public class GroupController {
 
     private final GroupService groupService;
@@ -36,8 +39,13 @@ public class GroupController {
         this.groupDTOMapper = groupDTOMapper;
     }
 
+    @ApiOperation(value = "Получение группы по id", tags = {"Group"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Нет доступа к группе"),
+            @ApiResponse(code = 200, message = "Группа получена. Возвращается группа."),
+            @ApiResponse(code = 400, message = "Группа не найдена")})
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(Principal principal, @PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> getById(Principal principal, @ApiParam("Id группы") @PathVariable Long id) {
         log.debug(String.format("Успешное подключение к get /groups/%s", id));
 
         if (!groupService.existsUser(id, principal.getName()))
@@ -52,8 +60,12 @@ public class GroupController {
         }
     }
 
+    @ApiOperation(value = "Получение группы по токену", tags = {"Group"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Группа получена. Возвращается группа."),
+            @ApiResponse(code = 400, message = "Группа не найдена")})
     @GetMapping()
-    public ResponseEntity<?> getByToken(@RequestParam String token) {
+    public ResponseEntity<?> getByToken(@ApiParam("Токен группы") @RequestParam String token) {
         log.debug("Успешное подключение к get /groups");
 
         try {
@@ -65,8 +77,12 @@ public class GroupController {
         }
     }
 
+    @ApiOperation(value = "Добавление группы", tags = {"Group"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 422, message = "Невалидная группа. Возвращается список ошибок валидации."),
+            @ApiResponse(code = 201, message = "Группа добавлена")})
     @PostMapping
-    public ResponseEntity<?> add(@RequestBody GroupDTO group) {
+    public ResponseEntity<?> add(@ApiParam("Добавляемая группа") @RequestBody GroupDTO group) {
         log.debug("Успешное подключение к post /groups");
 
         ValidationResult validationResult = groupValidator.validate(group);
@@ -80,8 +96,13 @@ public class GroupController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Удаление группы по id", tags = {"Group"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Нет доступа к удалению группы"),
+            @ApiResponse(code = 200, message = "Группа удалена"),
+            @ApiResponse(code = 400, message = "Группа не найдена")})
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteById(Principal principal, @PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> deleteById(Principal principal, @ApiParam("Id группы") @PathVariable(name = "id") Long id) {
         User user = userService.findByLogin(principal.getName());
         if (!groupService.isOwner(id, user.getId())) {
             log.warn(String.format("Нет доступа к delete /groups/%s", id));
@@ -99,8 +120,14 @@ public class GroupController {
         }
     }
 
+    @ApiOperation(value = "Удаление пользователя группы", tags = {"Group"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Нет доступа к удалению пользователя группы"),
+            @ApiResponse(code = 400, message = "Пользователь не найден"),
+            @ApiResponse(code = 200, message = "Пользователь удалён")})
     @DeleteMapping("/{id}/users")
-    public ResponseEntity<?> deleteUser(Principal principal, @PathVariable Long id, @RequestParam String userLogin) {
+    public ResponseEntity<?> deleteUser(Principal principal, @ApiParam("Id группы") @PathVariable Long id,
+                                        @ApiParam("Логин удаляемого пользователя") @RequestParam String userLogin) {
         User user = userService.findByLogin(principal.getName());
         if (!groupService.isOwner(id, user.getId())) {
             log.warn(String.format("Нет доступа к delete /groups/%s/users", id));
@@ -110,29 +137,36 @@ public class GroupController {
 
         if (!groupService.existsUser(id, userLogin)) {
             log.warn("Пользователь не найден");
-            return new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         groupService.deleteUser(id, userLogin);
-        log.info(String.format("Группа пользователя %s с id %s удалена", userLogin, id));
+        log.info(String.format("Пользователь %s группы с id %s удалён", userLogin, id));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Добавления пользователя в группу", tags = {"Group"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 409, message = "Пользователь уже в группе"),
+            @ApiResponse(code = 201, message = "Пользователь вступил в группу")})
     @PostMapping("/{id}/users")
-    public ResponseEntity<?> addUser(Principal principal, @PathVariable Long id) {
+    public ResponseEntity<?> addUser(Principal principal, @ApiParam("Id группы") @PathVariable Long id) {
         log.debug(String.format("Успешное подключение к post /groups/%s/users", id));
 
         if (!groupService.existsUser(id, principal.getName())) {
             log.warn("Пользователь уже в группе");
-            return new ResponseEntity<>("Пользователь уже в группе", HttpStatus.CONFLICT);
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
         User user = userService.findByLogin(principal.getName());
         groupService.addUser(id, user.getId());
         log.info(String.format("Пользователь %s вступил в группу с id %s", principal.getName(), id));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Получение групп пользователя", tags = {"Group"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Группы пользователя получены. Возвращается список групп.")})
     @GetMapping("/users")
     public ResponseEntity<?> getByUser(Principal principal) {
         log.debug("Успешное подключение к get /groups/users");
@@ -142,8 +176,12 @@ public class GroupController {
         return new ResponseEntity<>(groups, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Получение пользователей группы", tags = {"Group"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Нет доступа к данным"),
+            @ApiResponse(code = 200, message = "Пользователи группы получены. Возвращается список логинов пользователей")})
     @GetMapping("/{id}/users")
-    public ResponseEntity<?> getUsers(Principal principal, @PathVariable Long id) {
+    public ResponseEntity<?> getUsers(Principal principal, @ApiParam("Id группы") @PathVariable Long id) {
         log.debug(String.format("Успешное подключение к get /groups/%s/users", id));
 
         if (!groupService.existsUser(id, principal.getName())) {
@@ -156,8 +194,13 @@ public class GroupController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Переименование группы", tags = {"Group"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Нет доступа к переименованию группы"),
+            @ApiResponse(code = 200, message = "Группа переименована")})
     @PutMapping("/{id}")
-    public ResponseEntity<?> rename(Principal principal, @PathVariable Long id, @RequestParam String name) {
+    public ResponseEntity<?> rename(Principal principal, @ApiParam("Id группы") @PathVariable Long id,
+                                    @ApiParam("Новое название группы") @RequestParam String name) {
         log.debug(String.format("Успешное подключение к put /groups/%s", id));
 
         User user = userService.findByLogin(principal.getName());

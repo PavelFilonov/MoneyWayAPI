@@ -6,7 +6,9 @@ import com.edu.moneywayapi.domain.service.UserService;
 import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.UserDTOMapper;
 import com.edu.moneywayapi.webApi.validator.UserValidator;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,8 @@ import java.util.regex.Pattern;
 
 @RestController
 @Slf4j
+@Api(description = "Маршруты для пользователя",
+        tags = {"User"})
 public class UserController {
 
     private final UserService userService;
@@ -61,8 +65,13 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @ApiOperation(value = "Авторизация пользователя", tags = {"User"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Пользователь не найден"),
+            @ApiResponse(code = 409, message = "Неверный пароль"),
+            @ApiResponse(code = 200, message = "Авторизация прошла успешно")})
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO user) {
+    public ResponseEntity<?> login(@ApiParam("Авторизируемый пользователь") @RequestBody UserDTO user) {
         log.debug("Успешное подключение к post /login");
 
         User userFromDb = userService.findByEmail(user.getEmail());
@@ -85,8 +94,13 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Регистрация пользователя", tags = {"User"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 422, message = "Невалидный пользователь. Возращается список ошибок валидации."),
+            @ApiResponse(code = 409, message = "Данные уже используются. Возвращается информация об ошибке."),
+            @ApiResponse(code = 201, message = "Регистрация прошла успешно")})
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDTO user) {
+    public ResponseEntity<?> register(@ApiParam("Регистрируемый пользователь") @RequestBody UserDTO user) {
         log.debug("Успешное подключение к post /register");
 
         ValidationResult validationResult = userValidator.validate(user);
@@ -118,6 +132,9 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Получение авторизованного пользователя", tags = {"User"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Пользователь получен")})
     @GetMapping("/users/profile")
     public ResponseEntity<?> get(Principal principal) {
         log.debug("Успешное подключение к get /users/profile");
@@ -131,8 +148,13 @@ public class UserController {
                 HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Обновление email пользователя", tags = {"User"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 422, message = "Невалидный email. Возращается информация об ошибке."),
+            @ApiResponse(code = 409, message = "Email уже используется. Возвращается информация об ошибке."),
+            @ApiResponse(code = 200, message = "Email изменён")})
     @PutMapping("/users/profile/email")
-    public ResponseEntity<?> updateEmail(Principal principal, @RequestParam String email) {
+    public ResponseEntity<?> updateEmail(Principal principal, @ApiParam("Новый email") @RequestParam String email) {
         log.debug("Успешное подключение к put /users/profile/email");
 
         if (!Pattern.matches(formatEmail, email)) {
@@ -151,8 +173,13 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Обновление логина пользователя", tags = {"User"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 422, message = "Невалидный логин. Возращается информация об ошибке."),
+            @ApiResponse(code = 409, message = "Логин уже используется. Возвращается информация об ошибке."),
+            @ApiResponse(code = 200, message = "Логин изменён")})
     @PutMapping("/users/profile/login")
-    public ResponseEntity<?> updateLogin(Principal principal, @RequestParam String login) {
+    public ResponseEntity<?> updateLogin(Principal principal, @ApiParam("Новый логин") @RequestParam String login) {
         log.debug("Успешное подключение к put /users/profile/login");
 
         if (minSizeLogin > login.length() || login.length() > maxSizeLogin) {
@@ -171,6 +198,10 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Обновление пароля пользователя", tags = {"User"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 422, message = "Невалидный пароль. Возращается информация об ошибке."),
+            @ApiResponse(code = 200, message = "Пароль изменён")})
     @PutMapping("/users/profile/password")
     public ResponseEntity<?> updatePassword(Principal principal, @RequestParam String password) {
         log.debug("Успешное подключение к put /users/profile/password");
