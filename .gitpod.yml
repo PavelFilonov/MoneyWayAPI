@@ -15,7 +15,7 @@ tasks:
     command: java -jar webApi/target/webApi-0.0.1-SNAPSHOT.jar
 
 ports:
-  - port: 8080
+  - port: 8090
     onOpen: open-browser
   - port: 5432
     onOpen: ignore

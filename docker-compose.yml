@@ -12,4 +12,4 @@ services:
       - PGADMIN_DEFAULT_EMAIL=admin@email.com
       - PGADMIN_DEFAULT_PASSWORD=1
     ports:
-      - "8080:90"
+      - "8080:80"
