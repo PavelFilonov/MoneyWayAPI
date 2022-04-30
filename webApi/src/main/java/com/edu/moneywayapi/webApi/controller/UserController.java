@@ -6,7 +6,6 @@ import com.edu.moneywayapi.domain.service.UserService;
 import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.UserDTOMapper;
 import com.edu.moneywayapi.webApi.validator.UserValidator;
-import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -133,15 +132,8 @@ public class UserController {
     }
 
     @PutMapping("/users/profile/email")
-    public ResponseEntity<?> updateEmail(Principal principal, @RequestBody String requestJson) {
+    public ResponseEntity<?> updateEmail(Principal principal, @RequestParam String email) {
         log.debug("Успешное подключение к put /users/profile/email");
-
-        String email = JsonPath.read(requestJson, "$.email");
-
-        if (email == null) {
-            log.warn("Email отсутствует");
-            return new ResponseEntity<>("Email отсутствует", HttpStatus.BAD_REQUEST);
-        }
 
         if (!Pattern.matches(formatEmail, email)) {
             log.warn(isEmailNotMatchFormatMessage);
@@ -160,15 +152,8 @@ public class UserController {
     }
 
     @PutMapping("/users/profile/login")
-    public ResponseEntity<?> updateLogin(Principal principal, @RequestBody String responseJson) {
+    public ResponseEntity<?> updateLogin(Principal principal, @RequestParam String login) {
         log.debug("Успешное подключение к put /users/profile/login");
-
-        String login = JsonPath.read(responseJson, "$.login");
-
-        if (login == null) {
-            log.warn("Логин отсутствует");
-            return new ResponseEntity<>("Логин отсутствует", HttpStatus.BAD_REQUEST);
-        }
 
         if (minSizeLogin > login.length() || login.length() > maxSizeLogin) {
             log.warn(isIncorrectSizeLoginMessage);
@@ -187,15 +172,8 @@ public class UserController {
     }
 
     @PutMapping("/users/profile/password")
-    public ResponseEntity<?> updatePassword(Principal principal, @RequestBody String responseJson) {
+    public ResponseEntity<?> updatePassword(Principal principal, @RequestParam String password) {
         log.debug("Успешное подключение к put /users/profile/password");
-
-        String password = JsonPath.read(responseJson, "$.password");
-
-        if (password == null) {
-            log.warn("Пароль отсутствует");
-            return new ResponseEntity<>("Пароль отсутствует", HttpStatus.BAD_REQUEST);
-        }
 
         if (minSizePassword > password.length() || password.length() > maxSizePassword) {
             log.warn(isIncorrectSizePasswordMessage);

@@ -8,7 +8,6 @@ import com.edu.moneywayapi.domain.service.UserService;
 import com.edu.moneywayapi.webApi.dto.GroupDTO;
 import com.edu.moneywayapi.webApi.mapper.GroupDTOMapper;
 import com.edu.moneywayapi.webApi.validator.GroupValidator;
-import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,14 +53,8 @@ public class GroupController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getByToken(@RequestBody String requestJson) {
+    public ResponseEntity<?> getByToken(@RequestParam String token) {
         log.debug("Успешное подключение к get /groups");
-
-        String token = JsonPath.read(requestJson, "$.token");
-        if (token == null) {
-            log.warn("Токен отсутствует");
-            return new ResponseEntity<>("Токен отсутствует", HttpStatus.BAD_REQUEST);
-        }
 
         try {
             GroupDTO group = groupDTOMapper.map(groupService.findByToken(token));
@@ -107,19 +100,13 @@ public class GroupController {
     }
 
     @DeleteMapping("/{id}/users")
-    public ResponseEntity<?> deleteUser(Principal principal, @PathVariable Long id, @RequestBody String requestJson) {
+    public ResponseEntity<?> deleteUser(Principal principal, @PathVariable Long id, @RequestParam String userLogin) {
         User user = userService.findByLogin(principal.getName());
         if (!groupService.isOwner(id, user.getId())) {
             log.warn(String.format("Нет доступа к delete /groups/%s/users", id));
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         log.debug(String.format("Успешное подключение к delete /groups/%s/users", id));
-
-        String userLogin = JsonPath.read(requestJson, "$.userLogin");
-        if (userLogin == null) {
-            log.warn("Логин пользователя отсутствует");
-            return new ResponseEntity<>("Логин пользователя отсутствует", HttpStatus.BAD_REQUEST);
-        }
 
         if (!groupService.existsUser(id, userLogin)) {
             log.warn("Пользователь не найден");
@@ -157,6 +144,8 @@ public class GroupController {
 
     @GetMapping("/{id}/users")
     public ResponseEntity<?> getUsers(Principal principal, @PathVariable Long id) {
+        log.debug(String.format("Успешное подключение к get /groups/%s/users", id));
+
         if (!groupService.existsUser(id, principal.getName())) {
             log.warn(String.format("Нет доступа к get /groups/%s/users", id));
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -168,19 +157,13 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> rename(Principal principal, @PathVariable Long id, @RequestBody String requestJson) {
+    public ResponseEntity<?> rename(Principal principal, @PathVariable Long id, @RequestParam String name) {
         log.debug(String.format("Успешное подключение к put /groups/%s", id));
 
         User user = userService.findByLogin(principal.getName());
         if (!groupService.isOwner(id, user.getId())) {
             log.warn(String.format("Нет доступа к put /groups/%s", id));
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-
-        String name = JsonPath.read(requestJson, "$.name");
-        if (name == null) {
-            log.warn("Новое имя группы отсутствует");
-            return new ResponseEntity<>("Новое имя группы отсутствует", HttpStatus.BAD_REQUEST);
         }
 
         groupService.rename(id, name);
