@@ -1,7 +1,6 @@
 package com.edu.moneywayapi.webApi.controller;
 
 import br.com.fluentvalidator.context.ValidationResult;
-import com.edu.moneywayapi.domain.entity.Group;
 import com.edu.moneywayapi.domain.entity.User;
 import com.edu.moneywayapi.domain.exception.NoSuchGroupException;
 import com.edu.moneywayapi.domain.service.GroupService;
@@ -152,7 +151,7 @@ public class GroupController {
         log.debug("Успешное подключение к get /groups/users");
 
         User user = userService.findByLogin(principal.getName());
-        List<Group> groups = user.getGroups();
+        List<GroupDTO> groups = groupDTOMapper.mapListToDTO(user.getGroups());
         return new ResponseEntity<>(groups, HttpStatus.OK);
     }
 

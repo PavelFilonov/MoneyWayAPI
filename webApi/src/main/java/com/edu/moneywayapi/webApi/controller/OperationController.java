@@ -1,7 +1,6 @@
 package com.edu.moneywayapi.webApi.controller;
 
 import br.com.fluentvalidator.context.ValidationResult;
-import com.edu.moneywayapi.domain.entity.Operation;
 import com.edu.moneywayapi.domain.service.OperationService;
 import com.edu.moneywayapi.domain.service.UserService;
 import com.edu.moneywayapi.webApi.context.OperationRequestContext;
@@ -61,11 +60,11 @@ public class OperationController {
     public ResponseEntity<?> getByCategoryAndPeriod(@RequestBody OperationRequestContext operationRequestContext) {
         log.debug("Успешное подключение к get /operations");
 
-        List<Operation> operations;
+        List<OperationDTO> operations;
         try {
-            operations = operationService.findByCategoryAndPeriod(
+            operations = operationDTOMapper.mapListToDTO(operationService.findByCategoryAndPeriod(
                     operationRequestContext.getCategoryId(),
-                    operationRequestContext.getFromDate(), operationRequestContext.getToDate());
+                    operationRequestContext.getFromDate(), operationRequestContext.getToDate()));
         } catch (Exception e) {
             log.warn(e.getMessage());
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
