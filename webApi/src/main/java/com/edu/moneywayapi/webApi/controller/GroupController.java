@@ -123,7 +123,7 @@ public class GroupController {
 
         if (!groupService.existsUser(id, userLogin)) {
             log.warn("Пользователь не найден");
-            return new ResponseEntity<>("Пользователь не найден", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND);
         }
 
         groupService.deleteUser(id, userLogin);
