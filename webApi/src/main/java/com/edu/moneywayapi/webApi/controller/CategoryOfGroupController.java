@@ -41,19 +41,19 @@ public class CategoryOfGroupController {
         this.groupService = groupService;
     }
 
-    @GetMapping("/groups/{id}")
-    public ResponseEntity<?> get(Principal principal, @PathVariable Long id) {
-        if (!groupService.existsUser(id, principal.getName())) {
-            log.warn(String.format("Нет доступа к get /categories/groups/%s", id));
+    @GetMapping("/groups/{groupId}")
+    public ResponseEntity<?> get(Principal principal, @PathVariable Long groupId) {
+        if (!groupService.existsUser(groupId, principal.getName())) {
+            log.warn(String.format("Нет доступа к get /categories/groups/%s", groupId));
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        log.debug(String.format("Успешное подключение к get /categories/groups/%s", id));
+        log.debug(String.format("Успешное подключение к get /categories/groups/%s", groupId));
 
         Group group;
         try {
-            group = groupService.findById(id);
+            group = groupService.findById(groupId);
         } catch (NoSuchGroupException e) {
-            log.warn(String.format("Не найдена группа с id %s", id));
+            log.warn(String.format("Не найдена группа с id %s", groupId));
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
 
