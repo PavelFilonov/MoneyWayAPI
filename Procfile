@@ -1,0 +1,1 @@
+web: java -jar webApi/target/webApi-0.0.1-SNAPSHOT.jar --server.port=$PORT
