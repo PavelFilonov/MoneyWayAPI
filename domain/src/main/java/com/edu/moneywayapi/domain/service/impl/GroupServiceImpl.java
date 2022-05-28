@@ -68,7 +68,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public boolean existsUser(Long groupId, String userLogin) {
-        List<String> logins = groupRepository.getUsers(groupId);
+        List<String> logins = getUsers(groupId);
 
         for (String login : logins) {
             if (login.equals(userLogin))
