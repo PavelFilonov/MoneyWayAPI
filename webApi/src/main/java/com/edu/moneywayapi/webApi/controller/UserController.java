@@ -136,10 +136,11 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Пользователь получен")})
     @GetMapping("/users/profile")
-    public ResponseEntity<?> get(Principal principal) {
+    public ResponseEntity<?> get() {
         log.debug("Успешное подключение к get /users/profile");
 
-        UserDTO user = userDTOMapper.map(userService.findByLogin(principal.getName()));
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserDTO user = userDTOMapper.map(userService.findByLogin(name));
 
         return new ResponseEntity<>(
                 UserDTO.builder()
