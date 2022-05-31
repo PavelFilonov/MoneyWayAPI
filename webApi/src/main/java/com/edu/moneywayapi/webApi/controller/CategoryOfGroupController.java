@@ -148,13 +148,13 @@ public class CategoryOfGroupController {
         }
         log.debug(String.format("Успешное подключение к post /categories/groups/%s", groupId));
 
-        ValidationResult validationResult = categoryValidator.validate(category);
+        ValidationResult validationResult = categoryValidator.validate(userCategoryContext.getCategory());
         if (!validationResult.isValid()) {
             log.warn("Невалидная категория: " + validationResult.getErrors());
             return new ResponseEntity<>(validationResult.getErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        Category savedCategory = categoryService.save(categoryDTOMapper.map(category));
+        Category savedCategory = categoryService.save(categoryDTOMapper.map(userCategoryContext.getCategory()));
         categoryService.saveToGroup(savedCategory.getId(), groupId);
         log.info("Категория успешно добавлена");
         return new ResponseEntity<>(HttpStatus.CREATED);
