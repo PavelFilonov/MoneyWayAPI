@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class OperationRequestContext {
+public class DateOperationContext {
     private Long categoryId;
     private LocalDateTime fromDate;
     private LocalDateTime toDate;

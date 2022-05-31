@@ -3,7 +3,8 @@ package com.edu.moneywayapi.webApi.controller;
 import br.com.fluentvalidator.context.ValidationResult;
 import com.edu.moneywayapi.domain.service.OperationService;
 import com.edu.moneywayapi.domain.service.UserService;
-import com.edu.moneywayapi.webApi.context.OperationRequestContext;
+import com.edu.moneywayapi.webApi.context.DateOperationContext;
+import com.edu.moneywayapi.webApi.context.UserOperationContext;
 import com.edu.moneywayapi.webApi.dto.OperationDTO;
 import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.OperationDTOMapper;
@@ -46,19 +47,18 @@ public class OperationController {
             @ApiResponse(code = 422, message = "Невалидная операция. Возвращается список ошибок валидации."),
             @ApiResponse(code = 201, message = "Операция добавлена")})
     @PostMapping
-    public ResponseEntity<?> add(@ApiParam("Пользователь") @RequestBody UserDTO principal,
-                                 @ApiParam("Добавляемая операция") @RequestBody OperationDTO operation) {
+    public ResponseEntity<?> add(@ApiParam("Пользователь и добавляемая операция") @RequestBody UserOperationContext userOperationContext) {
         log.debug("Успешное подключение к post /operations");
 
-        ValidationResult validationResult = operationValidator.validate(operation);
+        ValidationResult validationResult = operationValidator.validate(userOperationContext.getOperation());
         if (!validationResult.isValid()) {
             log.warn("Невалидная операция: " + validationResult.getErrors());
             return new ResponseEntity<>(validationResult.getErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        UserDTO userDTO = userDTOMapper.map(userService.findByLogin(principal.getLogin()));
-        operation.setUserDTO(userDTO);
-        operationService.save(operationDTOMapper.map(operation));
+        UserDTO userDTO = userDTOMapper.map(userService.findByLogin(userOperationContext.getUser().getLogin()));
+        userOperationContext.getOperation().setUserDTO(userDTO);
+        operationService.save(operationDTOMapper.map(userOperationContext.getOperation()));
         log.info("Операция успешно добавлена");
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -69,14 +69,14 @@ public class OperationController {
             @ApiResponse(code = 200, message = "Операции получены. Возвращается список операций"),
             @ApiResponse(code = 400, message = "Операции не найдены")})
     @GetMapping
-    public ResponseEntity<?> getByCategoryAndPeriod(@ApiParam("Контекст запроса операций") @RequestBody OperationRequestContext operationRequestContext) {
+    public ResponseEntity<?> getByCategoryAndPeriod(@ApiParam("Контекст запроса операций") @RequestBody DateOperationContext dateOperationContext) {
         log.debug("Успешное подключение к get /operations");
 
         List<OperationDTO> operations;
         try {
             operations = operationDTOMapper.mapListToDTO(operationService.findByCategoryAndPeriod(
-                    operationRequestContext.getCategoryId(),
-                    operationRequestContext.getFromDate(), operationRequestContext.getToDate()));
+                    dateOperationContext.getCategoryId(),
+                    dateOperationContext.getFromDate(), dateOperationContext.getToDate()));
         } catch (Exception e) {
             log.warn(e.getMessage());
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);

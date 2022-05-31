@@ -5,6 +5,7 @@ import com.edu.moneywayapi.domain.entity.Category;
 import com.edu.moneywayapi.domain.entity.User;
 import com.edu.moneywayapi.domain.service.CategoryService;
 import com.edu.moneywayapi.domain.service.UserService;
+import com.edu.moneywayapi.webApi.context.UserCategoryContext;
 import com.edu.moneywayapi.webApi.dto.CategoryDTO;
 import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.CategoryDTOMapper;
@@ -57,7 +58,8 @@ public class CategoryOfUserController {
             @ApiResponse(code = 404, message = "Категория не найдена"),
             @ApiResponse(code = 200, message = "Категория удалена")})
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@ApiParam("Пользователь") @RequestBody UserDTO principal, @ApiParam("Id категории") @PathVariable Long id) {
+    public ResponseEntity<?> delete(@ApiParam("Пользователь") @RequestBody UserDTO principal,
+                                    @ApiParam("Id категории") @PathVariable Long id) {
         log.debug(String.format("Успешное подключение к delete /categories/%s", id));
 
         if (!userService.existsCategory(principal.getLogin(), id)) {
@@ -95,18 +97,17 @@ public class CategoryOfUserController {
             @ApiResponse(code = 422, message = "Невалидная категория. Возвращается список ошибок валидации"),
             @ApiResponse(code = 201, message = "Категория добавлена")})
     @PostMapping
-    public ResponseEntity<?> add(@ApiParam("Пользователь") @RequestBody UserDTO principal,
-                                 @ApiParam("Добавляемая категория") @RequestBody CategoryDTO category) {
+    public ResponseEntity<?> add(@ApiParam("Пользователь и категория") @RequestBody UserCategoryContext userCategoryContext) {
         log.debug("Успешное подключение к post /categories");
 
-        ValidationResult validationResult = categoryValidator.validate(category);
+        ValidationResult validationResult = categoryValidator.validate(userCategoryContext.getCategory());
         if (!validationResult.isValid()) {
             log.warn("Невалидная категория: " + validationResult.getErrors());
             return new ResponseEntity<>(validationResult.getErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        Category savedCategory = categoryService.save(categoryDTOMapper.map(category));
-        User user = userService.findByLogin(principal.getLogin());
+        Category savedCategory = categoryService.save(categoryDTOMapper.map(userCategoryContext.getCategory()));
+        User user = userService.findByLogin(userCategoryContext.getUser().getLogin());
         categoryService.saveToUser(savedCategory.getId(), user.getId());
         log.info("Категория успешно добавлена");
         return new ResponseEntity<>(HttpStatus.CREATED);

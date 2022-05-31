@@ -8,6 +8,7 @@ import com.edu.moneywayapi.domain.exception.NoSuchGroupException;
 import com.edu.moneywayapi.domain.service.CategoryService;
 import com.edu.moneywayapi.domain.service.GroupService;
 import com.edu.moneywayapi.domain.service.UserService;
+import com.edu.moneywayapi.webApi.context.UserCategoryContext;
 import com.edu.moneywayapi.webApi.dto.CategoryDTO;
 import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.CategoryDTOMapper;
@@ -133,15 +134,14 @@ public class CategoryOfGroupController {
             @ApiResponse(code = 422, message = "Невалидная категория. Возвращается список ошибок валидации"),
             @ApiResponse(code = 201, message = "Категория добавлена")})
     @PostMapping("/groups/{groupId}")
-    public ResponseEntity<?> add(@ApiParam("Пользователь") @RequestBody UserDTO principal,
-                                 @ApiParam("Id группы") @PathVariable Long groupId,
-                                 @ApiParam("Добавляемая категория") @RequestBody CategoryDTO category) {
+    public ResponseEntity<?> add(@ApiParam("Пользователь и категория") @RequestBody UserCategoryContext userCategoryContext,
+                                 @ApiParam("Id группы") @PathVariable Long groupId) {
         if (!groupService.existsById(groupId)) {
             log.warn(String.format("Группа с id %s не найдена", groupId));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        User user = userService.findByLogin(principal.getLogin());
+        User user = userService.findByLogin(userCategoryContext.getUser().getLogin());
         if (!groupService.isOwner(groupId, user.getId())) {
             log.warn(String.format("Нет доступа к post /categories/groups/%s", groupId));
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
