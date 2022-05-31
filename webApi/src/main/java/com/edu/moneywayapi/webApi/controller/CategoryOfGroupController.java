@@ -9,6 +9,7 @@ import com.edu.moneywayapi.domain.service.CategoryService;
 import com.edu.moneywayapi.domain.service.GroupService;
 import com.edu.moneywayapi.domain.service.UserService;
 import com.edu.moneywayapi.webApi.dto.CategoryDTO;
+import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.CategoryDTOMapper;
 import com.edu.moneywayapi.webApi.validator.CategoryValidator;
 import io.swagger.annotations.*;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -51,7 +51,8 @@ public class CategoryOfGroupController {
             @ApiResponse(code = 200, message = "Категории получены. Возвращается список категорий."),
             @ApiResponse(code = 404, message = "Категории не найдены")})
     @GetMapping("/groups/{groupId}")
-    public ResponseEntity<?> get(Principal principal, @ApiParam("Id группы") @PathVariable Long groupId) {
+    public ResponseEntity<?> get(@ApiParam("Пользователь") @RequestBody UserDTO principal,
+                                 @ApiParam("Id группы") @PathVariable Long groupId) {
         Group group;
         try {
             group = groupService.findById(groupId);
@@ -60,7 +61,7 @@ public class CategoryOfGroupController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
 
-        if (!groupService.existsUser(groupId, principal.getName())) {
+        if (!groupService.existsUser(groupId, principal.getLogin())) {
             log.warn(String.format("Нет доступа к get /categories/groups/%s", groupId));
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -78,14 +79,15 @@ public class CategoryOfGroupController {
             @ApiResponse(code = 403, message = "Нет доступа к удалению категории"),
             @ApiResponse(code = 200, message = "Категория удалена")})
     @DeleteMapping("/{id}/groups/{groupId}")
-    public ResponseEntity<?> delete(Principal principal, @ApiParam("Id категории") @PathVariable Long id,
+    public ResponseEntity<?> delete(@ApiParam("Пользователь") @RequestBody UserDTO principal,
+                                    @ApiParam("Id категории") @PathVariable Long id,
                                     @ApiParam("Id группы") @PathVariable Long groupId) {
         if (!groupService.existsCategory(groupId, id)) {
             log.warn(String.format("Категория с id %s не найдена", id));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        User user = userService.findByLogin(principal.getName());
+        User user = userService.findByLogin(principal.getLogin());
         if (!groupService.isOwner(groupId, user.getId())) {
             log.warn(String.format("Нет доступа к delete /categories/%s/groups/%s", id, groupId));
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -103,7 +105,8 @@ public class CategoryOfGroupController {
             @ApiResponse(code = 403, message = "Нет доступа к переименованию"),
             @ApiResponse(code = 200, message = "Категория переименована")})
     @PutMapping("/{id}/groups/{groupId}")
-    public ResponseEntity<?> rename(Principal principal, @ApiParam("Id категории") @PathVariable Long id,
+    public ResponseEntity<?> rename(@ApiParam("Пользователь") @RequestBody UserDTO principal,
+                                    @ApiParam("Id категории") @PathVariable Long id,
                                     @ApiParam("Id группы") @PathVariable Long groupId,
                                     @ApiParam("Новое название категории") @RequestParam String name) {
         if (!groupService.existsCategory(groupId, id)) {
@@ -111,7 +114,7 @@ public class CategoryOfGroupController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        User user = userService.findByLogin(principal.getName());
+        User user = userService.findByLogin(principal.getLogin());
         if (!groupService.isOwner(groupId, user.getId())) {
             log.warn(String.format("Нет доступа к put /categories/%s/groups/%s", id, groupId));
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -130,14 +133,15 @@ public class CategoryOfGroupController {
             @ApiResponse(code = 422, message = "Невалидная категория. Возвращается список ошибок валидации"),
             @ApiResponse(code = 201, message = "Категория добавлена")})
     @PostMapping("/groups/{groupId}")
-    public ResponseEntity<?> add(Principal principal, @ApiParam("Id группы") @PathVariable Long groupId,
+    public ResponseEntity<?> add(@ApiParam("Пользователь") @RequestBody UserDTO principal,
+                                 @ApiParam("Id группы") @PathVariable Long groupId,
                                  @ApiParam("Добавляемая категория") @RequestBody CategoryDTO category) {
         if (!groupService.existsById(groupId)) {
             log.warn(String.format("Группа с id %s не найдена", groupId));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        User user = userService.findByLogin(principal.getName());
+        User user = userService.findByLogin(principal.getLogin());
         if (!groupService.isOwner(groupId, user.getId())) {
             log.warn(String.format("Нет доступа к post /categories/groups/%s", groupId));
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

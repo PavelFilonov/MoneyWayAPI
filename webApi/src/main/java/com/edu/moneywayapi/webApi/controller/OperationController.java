@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -47,7 +46,8 @@ public class OperationController {
             @ApiResponse(code = 422, message = "Невалидная операция. Возвращается список ошибок валидации."),
             @ApiResponse(code = 201, message = "Операция добавлена")})
     @PostMapping
-    public ResponseEntity<?> add(Principal principal, @ApiParam("Добавляемая операция") @RequestBody OperationDTO operation) {
+    public ResponseEntity<?> add(@ApiParam("Пользователь") @RequestBody UserDTO principal,
+                                 @ApiParam("Добавляемая операция") @RequestBody OperationDTO operation) {
         log.debug("Успешное подключение к post /operations");
 
         ValidationResult validationResult = operationValidator.validate(operation);
@@ -56,7 +56,7 @@ public class OperationController {
             return new ResponseEntity<>(validationResult.getErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        UserDTO userDTO = userDTOMapper.map(userService.findByLogin(principal.getName()));
+        UserDTO userDTO = userDTOMapper.map(userService.findByLogin(principal.getLogin()));
         operation.setUserDTO(userDTO);
         operationService.save(operationDTOMapper.map(operation));
         log.info("Операция успешно добавлена");
