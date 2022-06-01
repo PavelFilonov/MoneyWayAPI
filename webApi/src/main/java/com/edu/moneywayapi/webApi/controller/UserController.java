@@ -137,7 +137,7 @@ public class UserController {
     public ResponseEntity<?> get(@ApiParam("Пользователь") @RequestBody UserDTO principal) {
         log.debug("Успешное подключение к get /users/profile");
 
-        UserDTO user = userDTOMapper.map(userService.findByLogin(principal.getLogin()));
+        UserDTO user = userDTOMapper.map(userService.findByEmail(principal.getEmail()));
 
         return new ResponseEntity<>(
                 UserDTO.builder()
