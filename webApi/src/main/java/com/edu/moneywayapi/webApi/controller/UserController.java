@@ -133,7 +133,7 @@ public class UserController {
     @ApiOperation(value = "Получение авторизованного пользователя", tags = {"User"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Пользователь получен")})
-    @GetMapping("/users/profile")
+    @PostMapping("/users/profile")
     public ResponseEntity<?> get(@ApiParam("Пользователь") @RequestBody UserDTO principal) {
         log.debug("Успешное подключение к get /users/profile");
 
