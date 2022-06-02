@@ -134,10 +134,11 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Пользователь получен")})
     @PostMapping("/users/profile")
-    public ResponseEntity<?> get(@ApiParam("Пользователь") @RequestBody UserDTO principal) {
+    public ResponseEntity<?> get() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.debug("Успешное подключение к get /users/profile");
 
-        UserDTO user = userDTOMapper.map(userService.findByEmail(principal.getEmail()));
+        UserDTO user = userDTOMapper.map(userService.findByEmail(authentication.getName()));
 
         return new ResponseEntity<>(
                 UserDTO.builder()
