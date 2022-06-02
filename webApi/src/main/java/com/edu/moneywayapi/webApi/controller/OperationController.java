@@ -4,7 +4,6 @@ import br.com.fluentvalidator.context.ValidationResult;
 import com.edu.moneywayapi.domain.service.OperationService;
 import com.edu.moneywayapi.domain.service.UserService;
 import com.edu.moneywayapi.webApi.context.DateOperationContext;
-import com.edu.moneywayapi.webApi.context.UserOperationContext;
 import com.edu.moneywayapi.webApi.dto.OperationDTO;
 import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.OperationDTOMapper;
@@ -15,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,18 +48,20 @@ public class OperationController {
             @ApiResponse(code = 422, message = "Невалидная операция. Возвращается список ошибок валидации."),
             @ApiResponse(code = 201, message = "Операция добавлена")})
     @PostMapping
-    public ResponseEntity<?> add(@ApiParam("Пользователь и добавляемая операция") @RequestBody UserOperationContext userOperationContext) {
+    public ResponseEntity<?> add(@ApiParam("Добавляемая операция") @RequestBody OperationDTO operation) {
         log.debug("Успешное подключение к post /operations");
 
-        ValidationResult validationResult = operationValidator.validate(userOperationContext.getOperation());
+        ValidationResult validationResult = operationValidator.validate(operation);
         if (!validationResult.isValid()) {
             log.warn("Невалидная операция: " + validationResult.getErrors());
             return new ResponseEntity<>(validationResult.getErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        UserDTO userDTO = userDTOMapper.map(userService.findByLogin(userOperationContext.getUser().getLogin()));
-        userOperationContext.getOperation().setUserDTO(userDTO);
-        operationService.save(operationDTOMapper.map(userOperationContext.getOperation()));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDTO userDTO = userDTOMapper.map(userService.findByLogin(authentication.getName()));
+        operation.setUserDTO(userDTO);
+        operationService.save(operationDTOMapper.map(operation));
+
         log.info("Операция успешно добавлена");
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

@@ -44,7 +44,7 @@ public class UserDALMapper implements UserMapper<UserDAL> {
                 .login(obj.getLogin())
                 .password(obj.getPassword())
                 .groups(groupDALMapper.mapListToEntity(obj.getGroups()))
-                .categories(categoryDALMapper.mapListToEntity(obj.getCategories()))
+//                .categories(categoryDALMapper.mapListToEntity(obj.getCategories()))
                 .build();
     }
 }

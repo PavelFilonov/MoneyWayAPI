@@ -2,6 +2,7 @@ package com.edu.moneywayapi.domain.repository;
 
 import com.edu.moneywayapi.domain.entity.Category;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CategoryRepository {
@@ -18,4 +19,6 @@ public interface CategoryRepository {
     void saveToUser(Long categoryId, Long userId);
 
     void saveToGroup(Long categoryId, Long groupId);
+
+    List<Category> findByUser(String username);
 }

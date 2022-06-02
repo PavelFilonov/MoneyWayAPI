@@ -7,6 +7,7 @@ import com.edu.moneywayapi.domain.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -55,5 +56,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void saveToGroup(Long categoryId, Long groupId) {
         categoryRepository.saveToGroup(categoryId, groupId);
+    }
+
+    @Override
+    public List<Category> findByUser(String username) {
+        return categoryRepository.findByUser(username);
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface JpaCategoryRepository extends JpaRepository<CategoryDAL, Long> {
 
@@ -24,4 +26,12 @@ public interface JpaCategoryRepository extends JpaRepository<CategoryDAL, Long> 
     @Modifying
     @Query(value = "insert into group_category (group_id, category_id) values (?2, ?1)", nativeQuery = true)
     void saveToGroup(Long categoryId, Long groupId);
+
+    @Query(value =  "select c.* " +
+                    "   from category c " +
+                    "       join user_category u_c on c.id = u_c.category_id" +
+                    "       join user u on u.id u_c.user_id" +
+                    "   where u.login = ?1",
+            nativeQuery = true)
+    List<CategoryDAL> findByUser(String username);
 }

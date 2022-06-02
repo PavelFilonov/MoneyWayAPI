@@ -147,7 +147,7 @@ public class UserController {
         log.debug("Успешное подключение к get /users/profile");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDTO user = userDTOMapper.map(userService.findByEmail(authentication.getName()));
+        UserDTO user = userDTOMapper.map(userService.findByLogin(authentication.getName()));
 
         return new ResponseEntity<>(
                 UserDTO.builder()
@@ -162,8 +162,7 @@ public class UserController {
             @ApiResponse(code = 409, message = "Email уже используется. Возвращается информация об ошибке."),
             @ApiResponse(code = 200, message = "Email изменён")})
     @PutMapping("/users/profile/email")
-    public ResponseEntity<?> updateEmail(@ApiParam("Пользователь") @RequestBody UserDTO principal,
-                                         @ApiParam("Новый email") @RequestParam String email) {
+    public ResponseEntity<?> updateEmail(@ApiParam("Новый email") @RequestParam String email) {
         log.debug("Успешное подключение к put /users/profile/email");
 
         if (!Pattern.matches(formatEmail, email)) {
@@ -176,7 +175,8 @@ public class UserController {
             return new ResponseEntity<>("Email уже используется", HttpStatus.CONFLICT);
         }
 
-        UserDTO userFromDb = userDTOMapper.map(userService.findByLogin(principal.getLogin()));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDTO userFromDb = userDTOMapper.map(userService.findByLogin(authentication.getName()));
         userService.updateEmail(email, userFromDb.getId());
         log.info("Email изменён");
         return new ResponseEntity<>(HttpStatus.OK);
@@ -188,8 +188,7 @@ public class UserController {
             @ApiResponse(code = 409, message = "Логин уже используется. Возвращается информация об ошибке."),
             @ApiResponse(code = 200, message = "Логин изменён")})
     @PutMapping("/users/profile/login")
-    public ResponseEntity<?> updateLogin(@ApiParam("Пользователь") @RequestBody UserDTO principal,
-                                         @ApiParam("Новый логин") @RequestParam String login) {
+    public ResponseEntity<?> updateLogin(@ApiParam("Новый логин") @RequestParam String login) {
         log.debug("Успешное подключение к put /users/profile/login");
 
         if (minSizeLogin > login.length() || login.length() > maxSizeLogin) {
@@ -202,7 +201,8 @@ public class UserController {
             return new ResponseEntity<>("Логин уже используется", HttpStatus.CONFLICT);
         }
 
-        UserDTO userFromDb = userDTOMapper.map(userService.findByLogin(principal.getLogin()));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDTO userFromDb = userDTOMapper.map(userService.findByLogin(authentication.getName()));
         userService.updateLogin(login, userFromDb.getId());
         log.info("Логин изменён");
         return new ResponseEntity<>(HttpStatus.OK);
@@ -213,8 +213,7 @@ public class UserController {
             @ApiResponse(code = 422, message = "Невалидный пароль. Возращается информация об ошибке."),
             @ApiResponse(code = 200, message = "Пароль изменён")})
     @PutMapping("/users/profile/password")
-    public ResponseEntity<?> updatePassword(@ApiParam("Пользователь") @RequestBody UserDTO principal,
-                                            @ApiParam("Новый пароль") @RequestParam String password) {
+    public ResponseEntity<?> updatePassword(@ApiParam("Новый пароль") @RequestParam String password) {
         log.debug("Успешное подключение к put /users/profile/password");
 
         if (minSizePassword > password.length() || password.length() > maxSizePassword) {
@@ -222,7 +221,8 @@ public class UserController {
             return new ResponseEntity<>(isIncorrectSizePasswordMessage, HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        UserDTO userFromDb = userDTOMapper.map(userService.findByLogin(principal.getLogin()));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDTO userFromDb = userDTOMapper.map(userService.findByLogin(authentication.getName()));
         userService.updatePassword(passwordEncoder.encode(password), userFromDb.getId());
         log.info("Пароль изменён");
         return new ResponseEntity<>(HttpStatus.OK);

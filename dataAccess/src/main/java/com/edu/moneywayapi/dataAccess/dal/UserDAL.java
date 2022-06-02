@@ -27,7 +27,7 @@ public class UserDAL {
     @Column(nullable = false)
     private String password;
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @Column(nullable = false)
     @JoinTable(
             name = "user_group",

@@ -8,6 +8,7 @@ import com.edu.moneywayapi.domain.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -56,5 +57,10 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public void saveToGroup(Long categoryId, Long groupId) {
         jpaCategoryRepository.saveToGroup(categoryId, groupId);
+    }
+
+    @Override
+    public List<Category> findByUser(String username) {
+        return categoryDALMapper.mapListToEntity(jpaCategoryRepository.findByUser(username));
     }
 }

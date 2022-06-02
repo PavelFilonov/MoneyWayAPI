@@ -23,11 +23,11 @@ public class OperationDAL {
     @Enumerated(EnumType.STRING)
     private TypeOperation type;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryDAL categoryDAL;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private UserDAL userDAL;
 

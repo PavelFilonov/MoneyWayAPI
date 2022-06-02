@@ -27,7 +27,7 @@ public class GroupDAL {
     @Column(name = "owner_id", nullable = false)
     private Long ownerId;
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @Column(nullable = false)
     @JoinTable(
             name = "group_category",

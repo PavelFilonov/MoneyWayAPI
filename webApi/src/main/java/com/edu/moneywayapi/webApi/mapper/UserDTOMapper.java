@@ -29,7 +29,7 @@ public class UserDTOMapper implements UserMapper<UserDTO> {
                 .login(user.getLogin())
                 .password(user.getPassword())
                 .groups(groupDTOMapper.mapListToDTO(user.getGroups()))
-                .categories(categoryDTOMapper.mapListToDTO(user.getCategories()))
+//                .categories(categoryDTOMapper.mapListToDTO(user.getCategories()))
                 .build();
     }
 
