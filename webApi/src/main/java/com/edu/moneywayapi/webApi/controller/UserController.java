@@ -3,8 +3,10 @@ package com.edu.moneywayapi.webApi.controller;
 import br.com.fluentvalidator.context.ValidationResult;
 import com.edu.moneywayapi.domain.entity.User;
 import com.edu.moneywayapi.domain.service.UserService;
+import com.edu.moneywayapi.webApi.config.jwt.JwtTokenProvider;
 import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.UserDTOMapper;
+import com.edu.moneywayapi.webApi.response.AuthResponse;
 import com.edu.moneywayapi.webApi.validator.UserValidator;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,7 @@ public class UserController {
     private final UserDTOMapper userDTOMapper;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Value("${user.email.not-match}")
     private String isEmailNotMatchFormatMessage;
@@ -55,12 +58,14 @@ public class UserController {
 
     @Autowired
     public UserController(UserService userService, UserValidator userValidator, UserDTOMapper userDTOMapper,
-                          AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+                          AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder,
+                          JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
         this.userValidator = userValidator;
         this.userDTOMapper = userDTOMapper;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @ApiOperation(value = "Авторизация пользователя", tags = {"User"})
@@ -84,12 +89,12 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userFromDb.getLogin(), user.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userFromDb.getLogin(), user.getPassword()));
+        String token = jwtTokenProvider.createToken(userFromDb.getLogin());
+        AuthResponse authResponse = new AuthResponse(userDTOMapper.map(userFromDb), token);
 
         log.info("Авторизация прошла успешно");
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Регистрация пользователя", tags = {"User"})
@@ -126,18 +131,22 @@ public class UserController {
                         .categories(new ArrayList<>())
                         .build()));
 
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword()));
+        String token = jwtTokenProvider.createToken(user.getLogin());
+        AuthResponse authResponse = new AuthResponse(user, token);
+
         log.info("Регистрация прошла успешно");
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(authResponse, HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "Получение авторизованного пользователя", tags = {"User"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Пользователь получен")})
-    @PostMapping("/users/profile")
+    @GetMapping("/users/profile")
     public ResponseEntity<?> get() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.debug("Успешное подключение к get /users/profile");
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDTO user = userDTOMapper.map(userService.findByEmail(authentication.getName()));
 
         return new ResponseEntity<>(
