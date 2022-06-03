@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static br.com.fluentvalidator.predicate.LogicalPredicate.not;
+import static br.com.fluentvalidator.predicate.ObjectPredicate.nullValue;
 import static br.com.fluentvalidator.predicate.StringPredicate.isDateTime;
 import static br.com.fluentvalidator.predicate.StringPredicate.stringEmptyOrNull;
 
@@ -67,7 +68,7 @@ public class OperationValidator extends AbstractValidator<OperationDTO> {
     @Override
     public void rules() {
         ruleFor(OperationDTO::getValue)
-                .must(not(stringEmptyOrNull()))
+                .must(not(nullValue()))
                 .withMessage(isValueEmptyMessage)
                 .withFieldName("value")
                 .critical();
