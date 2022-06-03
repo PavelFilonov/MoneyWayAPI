@@ -70,7 +70,7 @@ public class OperationController {
     @ApiResponses(value = {
             @ApiResponse(code = 422, message = "Невалидны данные. Возвращается информация об ошибке."),
             @ApiResponse(code = 200, message = "Операции получены. Возвращается список операций"),
-            @ApiResponse(code = 400, message = "Операции не найдены")})
+            @ApiResponse(code = 404, message = "Операции не найдены")})
     @PostMapping("/filter")
     public ResponseEntity<?> getByCategoryAndPeriod(@ApiParam("Контекст запроса операций") @RequestBody DateOperationContext dateOperationContext) {
         log.debug("Успешное подключение к get /operations");
