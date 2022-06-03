@@ -32,7 +32,7 @@ public class OperationDAL {
     private UserDAL userDAL;
 
     @Column(nullable = false)
-    private String value;
+    private Double value;
 
     @Column(name = "date_operation", nullable = false)
     private LocalDateTime createdAt;

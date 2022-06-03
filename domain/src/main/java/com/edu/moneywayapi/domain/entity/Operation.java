@@ -12,6 +12,6 @@ public class Operation {
     private TypeOperation type;
     private Category category;
     private User user;
-    private String value;
+    private Double value;
     private LocalDateTime createdAt;
 }

@@ -16,7 +16,7 @@ public class OperationDTO {
     private TypeOperation type;
     private CategoryDTO categoryDTO;
     private UserDTO userDTO;
-    private String value;
+    private Double value;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private String createdAt;
 }
