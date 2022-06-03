@@ -13,7 +13,7 @@ public interface JpaOperationRepository extends JpaRepository<OperationDAL, Long
 
     @Query(value =  "select o.*" +
                     "   from operation o" +
-                    "   where o.category_id = ?1 and o.created_at between ?2 and ?3",
+                    "   where o.category_id = ?1 and o.date_operation between ?2 and ?3",
             nativeQuery = true)
     List<OperationDAL> findByCategoryAndPeriod(Long categoryId, LocalDateTime fromDate, LocalDateTime toDate);
 }
