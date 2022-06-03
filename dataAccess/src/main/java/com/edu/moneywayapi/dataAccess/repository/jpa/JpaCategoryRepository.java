@@ -30,7 +30,7 @@ public interface JpaCategoryRepository extends JpaRepository<CategoryDAL, Long> 
     @Query(value =  "select c.* " +
                     "   from category c " +
                     "       join user_category u_c on c.id = u_c.category_id" +
-                    "       join user u on u.id u_c.user_id" +
+                    "       join user1 u on u.id = u_c.user_id" +
                     "   where u.login = ?1",
             nativeQuery = true)
     List<CategoryDAL> findByUser(String username);
