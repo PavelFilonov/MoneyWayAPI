@@ -3,7 +3,6 @@ package com.edu.moneywayapi.webApi.controller;
 import br.com.fluentvalidator.context.ValidationResult;
 import com.edu.moneywayapi.domain.service.OperationService;
 import com.edu.moneywayapi.domain.service.UserService;
-import com.edu.moneywayapi.webApi.context.DateOperationContext;
 import com.edu.moneywayapi.webApi.dto.OperationDTO;
 import com.edu.moneywayapi.webApi.dto.UserDTO;
 import com.edu.moneywayapi.webApi.mapper.OperationDTOMapper;

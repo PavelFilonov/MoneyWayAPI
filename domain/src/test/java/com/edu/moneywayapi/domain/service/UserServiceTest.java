@@ -28,6 +28,9 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private CategoryService categoryService;
+
     private User user;
 
     @BeforeEach
@@ -37,7 +40,7 @@ class UserServiceTest {
         user.setCategories(Collections.singletonList(category));
         lenient().when(userRepository.findByLogin("login")).thenReturn(user);
 
-        userService = new UserServiceImpl(userRepository);
+        userService = new UserServiceImpl(userRepository, categoryService);
     }
 
     @Test
@@ -179,22 +182,28 @@ class UserServiceTest {
 
     @Test
     void existsCategory() {
+        // setup
+        when(categoryService.findByUser("login")).thenReturn(user.getCategories());
+
         // test execution
         boolean existsCategory = userService.existsCategory("login", 1L);
 
         // test check
         assertTrue(existsCategory);
-        verify(userRepository).findByLogin("login");
+        verify(categoryService).findByUser("login");
     }
 
     @Test
     void notExistsCategory() {
+        // setup
+        when(categoryService.findByUser("login")).thenReturn(user.getCategories());
+
         // test execution
         boolean existsCategory = userService.existsCategory("login", 2L);
 
         // test check
         assertFalse(existsCategory);
-        verify(userRepository).findByLogin("login");
+        verify(categoryService).findByUser("login");
     }
 
     @Test

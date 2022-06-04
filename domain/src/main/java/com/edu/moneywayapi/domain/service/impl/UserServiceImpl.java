@@ -4,6 +4,7 @@ import com.edu.moneywayapi.domain.entity.Category;
 import com.edu.moneywayapi.domain.entity.User;
 import com.edu.moneywayapi.domain.exception.NoSuchUserException;
 import com.edu.moneywayapi.domain.repository.UserRepository;
+import com.edu.moneywayapi.domain.service.CategoryService;
 import com.edu.moneywayapi.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,9 +21,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    private final CategoryService categoryService;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, CategoryService categoryService) {
         this.userRepository = userRepository;
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -65,8 +69,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean existsCategory(String userLogin, Long categoryId) {
-        User user = findByLogin(userLogin);
-        List<Category> categories = user.getCategories();
+        List<Category> categories = categoryService.findByUser(userLogin);
 
         for (Category category : categories) {
             if (Objects.equals(category.getId(), categoryId))
