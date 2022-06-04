@@ -13,6 +13,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class DateOperationContext {
     private Long categoryId;
-    private LocalDateTime fromDate;
-    private LocalDateTime toDate;
+    private String fromDate;
+    private String toDate;
 }

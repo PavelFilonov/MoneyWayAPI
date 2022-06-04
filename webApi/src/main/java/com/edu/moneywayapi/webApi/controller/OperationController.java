@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -79,7 +80,8 @@ public class OperationController {
         try {
             operations = operationDTOMapper.mapListToDTO(operationService.findByCategoryAndPeriod(
                     dateOperationContext.getCategoryId(),
-                    dateOperationContext.getFromDate(), dateOperationContext.getToDate()));
+                    LocalDateTime.parse(dateOperationContext.getFromDate()),
+                    LocalDateTime.parse(dateOperationContext.getToDate())));
         } catch (Exception e) {
             log.warn(e.getMessage());
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
