@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,5 +18,5 @@ public class OperationDTO {
     private CategoryDTO category;
     private UserDTO user;
     private Double value;
-    private String createdAt;
+    private LocalDateTime createdAt;
 }
