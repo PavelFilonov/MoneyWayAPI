@@ -73,15 +73,16 @@ public class OperationController {
             @ApiResponse(code = 200, message = "Операции получены. Возвращается список операций"),
             @ApiResponse(code = 404, message = "Операции не найдены")})
     @PostMapping("/filter")
-    public ResponseEntity<?> getByCategoryAndPeriod(@ApiParam("Контекст запроса операций") @RequestBody DateOperationContext dateOperationContext) {
+    public ResponseEntity<?> getByCategoryAndPeriod(
+            @RequestParam Long categoryId,
+            @RequestParam String fromDate,
+            @RequestParam String toDate) {
         log.debug("Успешное подключение к get /operations");
 
         List<OperationDTO> operations;
         try {
             operations = operationDTOMapper.mapListToDTO(operationService.findByCategoryAndPeriod(
-                    dateOperationContext.getCategoryId(),
-                    LocalDateTime.parse(dateOperationContext.getFromDate()),
-                    LocalDateTime.parse(dateOperationContext.getToDate())));
+                    categoryId, LocalDateTime.parse(fromDate), LocalDateTime.parse(toDate)));
         } catch (Exception e) {
             log.warn(e.getMessage());
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
