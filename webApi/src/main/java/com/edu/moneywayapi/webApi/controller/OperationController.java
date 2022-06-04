@@ -59,7 +59,7 @@ public class OperationController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDTO userDTO = userDTOMapper.map(userService.findByLogin(authentication.getName()));
-        operation.setUserDTO(userDTO);
+        operation.setUser(userDTO);
         operationService.save(operationDTOMapper.map(operation));
 
         log.info("Операция успешно добавлена");

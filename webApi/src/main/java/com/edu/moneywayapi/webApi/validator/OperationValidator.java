@@ -51,10 +51,10 @@ public class OperationValidator extends AbstractValidator<OperationDTO> {
         if (instance.getType() == null)
             errors.add(Error.create("typeOperation", isTypeOperationNullMessage, null, null));
 
-        if (instance.getCategoryDTO() == null)
+        if (instance.getCategory() == null)
             errors.add(Error.create("category", isCategoryNullMessage, null, null));
         else {
-            ValidationResult categoryValidationResult = categoryValidator.validate(instance.getCategoryDTO());
+            ValidationResult categoryValidationResult = categoryValidator.validate(instance.getCategory());
             if (!categoryValidationResult.isValid())
                 errors.addAll(categoryValidationResult.getErrors());
         }

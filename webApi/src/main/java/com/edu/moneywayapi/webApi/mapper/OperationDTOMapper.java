@@ -30,8 +30,8 @@ public class OperationDTOMapper implements OperationMapper<OperationDTO> {
         return OperationDTO.builder()
                 .id(operation.getId())
                 .type(operation.getType())
-                .categoryDTO(categoryDTOMapper.map(operation.getCategory()))
-                .userDTO(userDTOMapper.map(operation.getUser()))
+                .category(categoryDTOMapper.map(operation.getCategory()))
+                .user(userDTOMapper.map(operation.getUser()))
                 .value(operation.getValue())
                 .createdAt(operation.getCreatedAt().toString())
                 .build();
@@ -45,8 +45,8 @@ public class OperationDTOMapper implements OperationMapper<OperationDTO> {
         return Operation.builder()
                 .id(obj.getId())
                 .type(obj.getType())
-                .category(categoryDTOMapper.map(obj.getCategoryDTO()))
-                .user(userDTOMapper.map(obj.getUserDTO()))
+                .category(categoryDTOMapper.map(obj.getCategory()))
+                .user(userDTOMapper.map(obj.getUser()))
                 .value(obj.getValue())
                 .createdAt(LocalDateTime.parse(obj.getCreatedAt()))
                 .build();
