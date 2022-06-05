@@ -68,7 +68,7 @@ public class CategoryOfUserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        categoryService.deleteById(id);
+        categoryService.delete(id, authentication.getName());
         log.info(String.format("Категория с id %s успешно удалена", id));
         return new ResponseEntity<>(HttpStatus.OK);
     }

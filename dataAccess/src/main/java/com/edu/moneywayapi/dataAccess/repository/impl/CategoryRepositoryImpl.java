@@ -63,4 +63,9 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     public List<Category> findByUser(String username) {
         return categoryDALMapper.mapListToEntity(jpaCategoryRepository.findByUser(username));
     }
+
+    @Override
+    public void deleteUserCategory(Long categoryId, Long userId) {
+        jpaCategoryRepository.deleteUserCategory(categoryId, userId);
+    }
 }

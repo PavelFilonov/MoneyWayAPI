@@ -7,7 +7,9 @@ import java.util.List;
 public interface CategoryService {
     Category save(Category category);
 
-    void deleteById(Long id);
+    void delete(Long id, String username);
+
+    void delete(Long categoryId, Long groupId);
 
     Category findById(Long id);
 

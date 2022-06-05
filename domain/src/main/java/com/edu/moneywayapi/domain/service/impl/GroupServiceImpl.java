@@ -19,6 +19,7 @@ import java.util.UUID;
 public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
+
     private final UserService userService;
 
     @Autowired

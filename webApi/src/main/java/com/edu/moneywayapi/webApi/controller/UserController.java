@@ -149,11 +149,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDTO user = userDTOMapper.map(userService.findByLogin(authentication.getName()));
 
-        return new ResponseEntity<>(
-                UserDTO.builder()
-                        .email(user.getEmail())
-                        .login(user.getLogin()).build(),
-                HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Обновление email пользователя", tags = {"User"})

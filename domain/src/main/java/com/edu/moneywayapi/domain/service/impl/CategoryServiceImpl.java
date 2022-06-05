@@ -1,8 +1,12 @@
 package com.edu.moneywayapi.domain.service.impl;
 
 import com.edu.moneywayapi.domain.entity.Category;
+import com.edu.moneywayapi.domain.entity.Group;
+import com.edu.moneywayapi.domain.entity.User;
 import com.edu.moneywayapi.domain.exception.NoSuchCategoryException;
 import com.edu.moneywayapi.domain.repository.CategoryRepository;
+import com.edu.moneywayapi.domain.repository.GroupRepository;
+import com.edu.moneywayapi.domain.repository.UserRepository;
 import com.edu.moneywayapi.domain.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +19,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    private final UserRepository userService;
+
+    private final GroupRepository groupRepository;
+
     @Autowired
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, UserRepository userService, GroupRepository groupRepository) {
         this.categoryRepository = categoryRepository;
+        this.userService = userService;
+        this.groupRepository = groupRepository;
     }
 
     @Override
@@ -26,8 +36,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void delete(Long id, String username) {
+        User user = userService.findByLogin(username);
+        categoryRepository.deleteUserCategory(id, user.getId());
         categoryRepository.deleteById(id);
+    }
+
+    @Override
+    public void delete(Long categoryId, Long groupId) {
+        Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty())
+            return;
+
+        List<Category> categories = group.get().getCategories();
+        Category category = findById(categoryId);
+        categories.remove(category);
     }
 
     @Override

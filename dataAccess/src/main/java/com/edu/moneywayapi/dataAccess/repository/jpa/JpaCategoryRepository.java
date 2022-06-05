@@ -34,4 +34,10 @@ public interface JpaCategoryRepository extends JpaRepository<CategoryDAL, Long> 
                     "   where u.login = ?1",
             nativeQuery = true)
     List<CategoryDAL> findByUser(String username);
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from user_category where category_id = ?1 and user_id = ?2",
+            nativeQuery = true)
+    void deleteUserCategory(Long categoryId, Long userId);
 }

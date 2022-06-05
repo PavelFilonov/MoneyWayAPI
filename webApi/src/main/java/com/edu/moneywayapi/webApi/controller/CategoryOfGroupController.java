@@ -95,7 +95,7 @@ public class CategoryOfGroupController {
         }
         log.debug(String.format("Успешное подключение к delete /categories/%s/groups/%s", id, groupId));
 
-        categoryService.deleteById(id);
+        categoryService.delete(id, groupId);
         log.info(String.format("Категория с id %s успешно удалена", id));
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -21,4 +21,6 @@ public interface CategoryRepository {
     void saveToGroup(Long categoryId, Long groupId);
 
     List<Category> findByUser(String username);
+
+    void deleteUserCategory(Long categoryId, Long userId);
 }

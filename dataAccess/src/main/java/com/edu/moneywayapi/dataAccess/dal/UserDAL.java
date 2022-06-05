@@ -27,7 +27,7 @@ public class UserDAL {
     @Column(nullable = false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Column(nullable = false)
     @JoinTable(
             name = "user_group",
@@ -36,7 +36,7 @@ public class UserDAL {
     )
     private List<GroupDAL> groups;
 
-    @ManyToMany()
+    @ManyToMany(cascade = CascadeType.ALL)
     @Column(nullable = false)
     @JoinTable(
             name = "user_category",
