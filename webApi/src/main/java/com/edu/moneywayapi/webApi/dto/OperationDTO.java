@@ -18,5 +18,5 @@ public class OperationDTO {
     private CategoryDTO category;
     private UserDTO user;
     private Double value;
-    private LocalDateTime createdAt;
+    private String createdAt;
 }
