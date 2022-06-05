@@ -24,6 +24,9 @@ public class CategoryDTOMapper implements CategoryMapper<CategoryDTO> {
 
     @Override
     public Category map(CategoryDTO obj) {
+        if (obj == null)
+            return null;
+
         return Category.builder()
                 .id(obj.getId())
                 .name(obj.getName())
