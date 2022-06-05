@@ -34,6 +34,9 @@ public class CategoryDALMapper implements CategoryMapper<CategoryDAL> {
     }
 
     public List<CategoryDAL> mapListToDAL(List<Category> categories) {
+        if (categories == null)
+            return new ArrayList<>();
+
         List<CategoryDAL> categoriesDAL = new ArrayList<>();
 
         for (Category category : categories) {
@@ -44,6 +47,9 @@ public class CategoryDALMapper implements CategoryMapper<CategoryDAL> {
     }
 
     public List<Category> mapListToEntity(List<CategoryDAL> categoriesDAL) {
+        if (categoriesDAL == null)
+            return new ArrayList<>();
+
         List<Category> categories = new ArrayList<>();
 
         for (CategoryDAL categoryDAL : categoriesDAL) {

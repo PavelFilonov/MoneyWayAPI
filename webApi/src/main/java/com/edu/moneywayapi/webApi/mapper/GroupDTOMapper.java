@@ -48,6 +48,9 @@ public class GroupDTOMapper implements GroupMapper<GroupDTO> {
     }
 
     public List<GroupDTO> mapListToDTO(List<Group> groups) {
+        if (groups == null)
+            return new ArrayList<>();
+
         List<GroupDTO> groupsDTO = new ArrayList<>();
 
         for (Group group : groups) {
@@ -58,6 +61,9 @@ public class GroupDTOMapper implements GroupMapper<GroupDTO> {
     }
 
     public List<Group> mapListToEntity(List<GroupDTO> groupsDTO) {
+        if (groupsDTO == null)
+            return new ArrayList<>();
+
         List<Group> groups = new ArrayList<>();
 
         for (GroupDTO groupDTO : groupsDTO) {

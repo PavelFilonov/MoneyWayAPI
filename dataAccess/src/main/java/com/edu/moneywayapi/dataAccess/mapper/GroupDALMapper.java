@@ -48,6 +48,9 @@ public class GroupDALMapper implements GroupMapper<GroupDAL> {
     }
 
     public List<GroupDAL> mapListToDAL(List<Group> groups) {
+        if (groups == null)
+            return new ArrayList<>();
+
         List<GroupDAL> groupsDAL = new ArrayList<>();
 
         for (Group group : groups) {
@@ -58,6 +61,9 @@ public class GroupDALMapper implements GroupMapper<GroupDAL> {
     }
 
     public List<Group> mapListToEntity(List<GroupDAL> groupsDAL) {
+        if (groupsDAL == null)
+            return new ArrayList<>();
+
         List<Group> groups = new ArrayList<>();
 
         for (GroupDAL groupDAL : groupsDAL) {

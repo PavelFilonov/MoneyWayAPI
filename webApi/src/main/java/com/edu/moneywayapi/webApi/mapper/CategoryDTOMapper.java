@@ -31,6 +31,9 @@ public class CategoryDTOMapper implements CategoryMapper<CategoryDTO> {
     }
 
     public List<CategoryDTO> mapListToDTO(List<Category> categories) {
+        if (categories == null)
+            return new ArrayList<>();
+
         List<CategoryDTO> categoriesDTO = new ArrayList<>();
 
         for (Category category : categories) {
@@ -41,6 +44,9 @@ public class CategoryDTOMapper implements CategoryMapper<CategoryDTO> {
     }
 
     public List<Category> mapListToEntity(List<CategoryDTO> categoriesDTO) {
+        if (categoriesDTO == null)
+            return new ArrayList<>();
+
         List<Category> categories = new ArrayList<>();
 
         for (CategoryDTO categoryDTO : categoriesDTO) {

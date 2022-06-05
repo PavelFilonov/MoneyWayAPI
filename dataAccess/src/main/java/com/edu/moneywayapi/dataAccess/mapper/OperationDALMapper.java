@@ -52,6 +52,9 @@ public class OperationDALMapper implements OperationMapper<OperationDAL> {
     }
 
     public List<Operation> mapListToEntity(List<OperationDAL> operationsDAL) {
+        if (operationsDAL == null)
+            return new ArrayList<>();
+
         List<Operation> operations = new ArrayList<>();
 
         for (OperationDAL operationDAL : operationsDAL) {

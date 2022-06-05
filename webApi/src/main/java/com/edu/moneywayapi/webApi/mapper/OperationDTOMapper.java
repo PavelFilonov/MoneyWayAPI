@@ -53,6 +53,9 @@ public class OperationDTOMapper implements OperationMapper<OperationDTO> {
     }
 
     public List<OperationDTO> mapListToDTO(List<Operation> operations) {
+        if (operations == null)
+            return new ArrayList<>();
+
         List<OperationDTO> operationsDTO = new ArrayList<>();
 
         for (Operation operation : operations) {
