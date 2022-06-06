@@ -5,7 +5,6 @@ import com.edu.moneywayapi.domain.entity.Group;
 import com.edu.moneywayapi.domain.entity.User;
 import com.edu.moneywayapi.domain.exception.NoSuchCategoryException;
 import com.edu.moneywayapi.domain.repository.CategoryRepository;
-import com.edu.moneywayapi.domain.repository.GroupRepository;
 import com.edu.moneywayapi.domain.repository.UserRepository;
 import com.edu.moneywayapi.domain.service.impl.CategoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,9 +33,6 @@ class CategoryServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private GroupRepository groupRepository;
-
     private Category category;
 
     private List<Category> categories;
@@ -48,7 +44,7 @@ class CategoryServiceTest {
         categories.add(category);
         lenient().when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
 
-        categoryService = new CategoryServiceImpl(categoryRepository, userRepository, groupRepository);
+        categoryService = new CategoryServiceImpl(categoryRepository, userRepository);
     }
 
     @Test
@@ -84,15 +80,14 @@ class CategoryServiceTest {
     void deleteForGroup() {
         // setup
         Optional<Group> group = Optional.ofNullable(Group.builder().id(1L).categories(categories).build());
-        when(groupRepository.findById(group.get().getId())).thenReturn(group);
-        InOrder inOrder = inOrder(groupRepository, categoryRepository);
+        InOrder inOrder = inOrder(categoryRepository);
 
         // test execution
         categoryService.delete(1L, 1L);
 
         // text check
-        inOrder.verify(groupRepository).findById(1L);
-        inOrder.verify(categoryRepository).findById(1L);
+        inOrder.verify(categoryRepository).deleteGroupCategory(1L, 1L);
+        inOrder.verify(categoryRepository).deleteById(1L);
     }
 
     @Test

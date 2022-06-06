@@ -68,4 +68,9 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     public void deleteUserCategory(Long categoryId, Long userId) {
         jpaCategoryRepository.deleteUserCategory(categoryId, userId);
     }
+
+    @Override
+    public void deleteGroupCategory(Long categoryId, Long groupId) {
+        jpaCategoryRepository.deleteGroupCategory(categoryId, groupId);
+    }
 }

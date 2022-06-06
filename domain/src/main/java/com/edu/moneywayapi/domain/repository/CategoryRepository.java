@@ -23,4 +23,6 @@ public interface CategoryRepository {
     List<Category> findByUser(String username);
 
     void deleteUserCategory(Long categoryId, Long userId);
+
+    void deleteGroupCategory(Long categoryId, Long groupId);
 }

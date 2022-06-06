@@ -40,4 +40,10 @@ public interface JpaCategoryRepository extends JpaRepository<CategoryDAL, Long> 
     @Query(value = "delete from user_category where category_id = ?1 and user_id = ?2",
             nativeQuery = true)
     void deleteUserCategory(Long categoryId, Long userId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from group_category where category_id = ?1 and group_id = ?2",
+            nativeQuery = true)
+    void deleteGroupCategory(Long categoryId, Long groupId);
 }
