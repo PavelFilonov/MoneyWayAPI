@@ -253,4 +253,18 @@ class GroupServiceTest {
         // test check
         verify(groupRepository).rename(1L, "Новое название");
     }
+
+    @Test
+    void findByUser() {
+        // setup
+        List<Group> groups = Collections.singletonList(group);
+        when(groupRepository.findByUser(1L)).thenReturn(groups);
+
+        // test execution
+        List<Group> groupsByUser = groupService.findByUser(1L);
+
+        // test check
+        assertEquals(groups, groupsByUser);
+        verify(groupRepository).findByUser(1L);
+    }
 }

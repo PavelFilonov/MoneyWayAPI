@@ -28,4 +28,6 @@ public interface GroupService {
     void addUser(Long groupId, Long userId);
 
     void rename(Long groupId, String name);
+
+    List<Group> findByUser(Long userId);
 }

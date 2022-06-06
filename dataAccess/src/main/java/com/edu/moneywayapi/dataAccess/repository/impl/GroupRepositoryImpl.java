@@ -73,4 +73,9 @@ public class GroupRepositoryImpl implements GroupRepository {
     public boolean existsById(Long id) {
         return jpaGroupRepository.existsById(id);
     }
+
+    @Override
+    public List<Group> findByUser(Long userId) {
+        return groupDALMapper.mapListToEntity(jpaGroupRepository.findByUser(userId));
+    }
 }

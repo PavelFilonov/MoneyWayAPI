@@ -111,4 +111,9 @@ public class GroupServiceImpl implements GroupService {
     public void rename(Long groupId, String name) {
         groupRepository.rename(groupId, name);
     }
+
+    @Override
+    public List<Group> findByUser(Long userId) {
+        return groupRepository.findByUser(userId);
+    }
 }

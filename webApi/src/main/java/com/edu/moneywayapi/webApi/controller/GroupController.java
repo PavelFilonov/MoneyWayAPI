@@ -178,7 +178,9 @@ public class GroupController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findByLogin(authentication.getName());
-        List<GroupDTO> groups = groupDTOMapper.mapListToDTO(user.getGroups());
+
+        List<GroupDTO> groups = groupDTOMapper.mapListToDTO(groupService.findByUser(user.getId()));
+
         return new ResponseEntity<>(groups, HttpStatus.OK);
     }
 

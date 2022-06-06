@@ -42,4 +42,10 @@ public interface JpaGroupRepository extends JpaRepository<GroupDAL, Long> {
     @Modifying
     @Query(value = "update group1 set name = ?2 where id = ?1", nativeQuery = true)
     void rename(Long groupId, String name);
+
+    @Query(value =  "select g.* " +
+                    "   from group1 g " +
+                    "       join user_group u_g on g.id = u_c.group_id and u_c.user_id = ?1",
+            nativeQuery = true)
+    List<GroupDAL> findByUser(Long userId);
 }

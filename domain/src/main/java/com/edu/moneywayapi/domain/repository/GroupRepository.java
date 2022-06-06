@@ -25,4 +25,6 @@ public interface GroupRepository {
     void rename(Long groupId, String name);
 
     boolean existsById(Long id);
+
+    List<Group> findByUser(Long userId);
 }
