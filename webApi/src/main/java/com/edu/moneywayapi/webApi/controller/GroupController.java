@@ -93,9 +93,9 @@ public class GroupController {
             return new ResponseEntity<>(validationResult.getErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        groupService.save(groupDTOMapper.map(group));
+        GroupDTO groupDTO = groupDTOMapper.map(groupService.save(groupDTOMapper.map(group)));
         log.info("Группа добавлена");
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(groupDTO, HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "Удаление группы по id", tags = {"Group"})
