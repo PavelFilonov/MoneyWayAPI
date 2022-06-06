@@ -45,7 +45,7 @@ public interface JpaGroupRepository extends JpaRepository<GroupDAL, Long> {
 
     @Query(value =  "select g.* " +
                     "   from group1 g " +
-                    "       join user_group u_g on g.id = u_c.group_id and u_c.user_id = ?1",
+                    "       join user_group u_g on g.id = u_g.group_id and u_g.user_id = ?1",
             nativeQuery = true)
     List<GroupDAL> findByUser(Long userId);
 }
