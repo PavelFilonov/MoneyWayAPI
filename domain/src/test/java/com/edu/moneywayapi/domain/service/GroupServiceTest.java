@@ -47,14 +47,14 @@ class GroupServiceTest {
     @Test
     void save() {
         // setup
-        when(groupRepository.save(group)).thenReturn(group);
+        when(groupRepository.save(group, 1L)).thenReturn(group);
 
         // test execution
-        Group savedGroup = groupService.save(group);
+        Group savedGroup = groupService.save(group, 1L);
 
         // test check
         assertEquals(group, savedGroup);
-        verify(groupRepository).save(group);
+        verify(groupRepository).save(group, 1L);
     }
 
     @Test
