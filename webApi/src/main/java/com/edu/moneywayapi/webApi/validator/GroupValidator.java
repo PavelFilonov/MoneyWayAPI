@@ -54,11 +54,5 @@ public class GroupValidator extends AbstractValidator<GroupDTO> {
                 .withMessage(isNameEmptyMessage)
                 .withFieldName("name")
                 .critical();
-
-        ruleFor(GroupDTO::getToken)
-                .must(not(stringEmptyOrNull()))
-                .withMessage(isTokenEmptyMessage)
-                .withFieldName("token")
-                .critical();
     }
 }
