@@ -128,18 +128,11 @@ public class GroupController {
 
     @ApiOperation(value = "Удаление пользователя группы", tags = {"Group"})
     @ApiResponses(value = {
-            @ApiResponse(code = 403, message = "Нет доступа к удалению пользователя группы"),
             @ApiResponse(code = 400, message = "Пользователь не найден"),
             @ApiResponse(code = 200, message = "Пользователь удалён")})
     @DeleteMapping("/{id}/users")
     public ResponseEntity<?> deleteUser(@ApiParam("Id группы") @PathVariable Long id,
                                         @ApiParam("Логин удаляемого пользователя") @RequestParam String userLogin) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByLogin(authentication.getName());
-        if (!groupService.isOwner(id, user.getId())) {
-            log.warn(String.format("Нет доступа к delete /groups/%s/users", id));
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
         log.debug(String.format("Успешное подключение к delete /groups/%s/users", id));
 
         if (!groupService.existsUser(id, userLogin)) {
