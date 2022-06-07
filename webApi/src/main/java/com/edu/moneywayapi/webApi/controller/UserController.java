@@ -152,6 +152,17 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Получение имени пользователя по id", tags = {"User"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Ответ получен")})
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> getLoginById(@PathVariable Long id) {
+        log.debug("Успешное подключение к get /users/profile");
+
+        User user = userService.findById(id);
+        return new ResponseEntity<>(UserDTO.builder().login(user.getLogin()), HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Обновление email пользователя", tags = {"User"})
     @ApiResponses(value = {
             @ApiResponse(code = 422, message = "Невалидный email. Возращается информация об ошибке."),
