@@ -29,9 +29,9 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group save(Group group) {
+    public Group save(Group group, Long userId) {
         group.setToken(String.valueOf(UUID.randomUUID()));
-        return groupRepository.save(group);
+        return groupRepository.save(group, userId);
     }
 
     @Override

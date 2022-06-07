@@ -5,7 +5,7 @@ import com.edu.moneywayapi.domain.entity.Group;
 import java.util.List;
 
 public interface GroupService {
-    Group save(Group group);
+    Group save(Group group, Long userId);
 
     Group findById(Long id);
 

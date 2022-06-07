@@ -24,8 +24,10 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
-    public Group save(Group group) {
-        return groupDALMapper.map(jpaGroupRepository.save(groupDALMapper.map(group)));
+    public Group save(Group group, Long userId) {
+        Group addedGroup = groupDALMapper.map(jpaGroupRepository.save(groupDALMapper.map(group)));
+        addUser(addedGroup.getId(), userId);
+        return addedGroup;
     }
 
     @Override

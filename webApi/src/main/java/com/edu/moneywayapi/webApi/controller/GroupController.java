@@ -93,7 +93,10 @@ public class GroupController {
             return new ResponseEntity<>(validationResult.getErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        GroupDTO groupDTO = groupDTOMapper.map(groupService.save(groupDTOMapper.map(group)));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByLogin(authentication.getName());
+
+        GroupDTO groupDTO = groupDTOMapper.map(groupService.save(groupDTOMapper.map(group), user.getId()));
         log.info("Группа добавлена");
         return new ResponseEntity<>(groupDTO, HttpStatus.CREATED);
     }
