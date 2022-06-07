@@ -48,4 +48,10 @@ public interface JpaGroupRepository extends JpaRepository<GroupDAL, Long> {
                     "       join user_group u_g on g.id = u_g.group_id and u_g.user_id = ?1",
             nativeQuery = true)
     List<GroupDAL> findByUser(Long userId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from user_group where group_id = ?1",
+            nativeQuery = true)
+    void deleteUserGroup(Long id);
 }
