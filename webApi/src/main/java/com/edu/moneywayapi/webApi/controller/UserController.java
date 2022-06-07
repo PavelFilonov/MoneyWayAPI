@@ -160,7 +160,7 @@ public class UserController {
         log.debug("Успешное подключение к get /users/profile");
 
         User user = userService.findById(id);
-        return new ResponseEntity<>(UserDTO.builder().login(user.getLogin()), HttpStatus.OK);
+        return new ResponseEntity<>(UserDTO.builder().login(user.getLogin()).build(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Обновление email пользователя", tags = {"User"})
