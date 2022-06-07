@@ -3,7 +3,6 @@ package com.edu.moneywayapi.webApi.controller;
 import br.com.fluentvalidator.context.ValidationResult;
 import com.edu.moneywayapi.domain.entity.Category;
 import com.edu.moneywayapi.domain.entity.Group;
-import com.edu.moneywayapi.domain.entity.User;
 import com.edu.moneywayapi.domain.exception.NoSuchGroupException;
 import com.edu.moneywayapi.domain.service.CategoryService;
 import com.edu.moneywayapi.domain.service.GroupService;
@@ -32,16 +31,14 @@ public class CategoryOfGroupController {
     private final CategoryService categoryService;
     private final CategoryValidator categoryValidator;
     private final CategoryDTOMapper categoryDTOMapper;
-    private final UserService userService;
     private final GroupService groupService;
 
     @Autowired
     public CategoryOfGroupController(CategoryService categoryService, CategoryValidator categoryValidator,
-                                     CategoryDTOMapper categoryDTOMapper, UserService userService, GroupService groupService) {
+                                     CategoryDTOMapper categoryDTOMapper, GroupService groupService) {
         this.categoryService = categoryService;
         this.categoryValidator = categoryValidator;
         this.categoryDTOMapper = categoryDTOMapper;
-        this.userService = userService;
         this.groupService = groupService;
     }
 
@@ -86,13 +83,6 @@ public class CategoryOfGroupController {
             log.warn(String.format("Категория с id %s не найдена", id));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByLogin(authentication.getName());
-        if (!groupService.isOwner(groupId, user.getId())) {
-            log.warn(String.format("Нет доступа к delete /categories/%s/groups/%s", id, groupId));
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
         log.debug(String.format("Успешное подключение к delete /categories/%s/groups/%s", id, groupId));
 
         categoryService.delete(id, groupId);
@@ -103,7 +93,6 @@ public class CategoryOfGroupController {
     @ApiOperation(value = "Переименование категории группы", tags = {"Category"})
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Категория не найдена"),
-            @ApiResponse(code = 403, message = "Нет доступа к переименованию"),
             @ApiResponse(code = 200, message = "Категория переименована")})
     @PutMapping("/{id}/groups/{groupId}")
     public ResponseEntity<?> rename(@ApiParam("Id категории") @PathVariable Long id,
@@ -112,13 +101,6 @@ public class CategoryOfGroupController {
         if (!groupService.existsCategory(groupId, id)) {
             log.warn(String.format("Категория с id %s не найдена", id));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByLogin(authentication.getName());
-        if (!groupService.isOwner(groupId, user.getId())) {
-            log.warn(String.format("Нет доступа к put /categories/%s/groups/%s", id, groupId));
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         log.debug(String.format("Успешное подключение к put /categories/%s/groups/%s", id, groupId));
 
@@ -139,13 +121,6 @@ public class CategoryOfGroupController {
         if (!groupService.existsById(groupId)) {
             log.warn(String.format("Группа с id %s не найдена", groupId));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByLogin(authentication.getName());
-        if (!groupService.isOwner(groupId, user.getId())) {
-            log.warn(String.format("Нет доступа к post /categories/groups/%s", groupId));
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         log.debug(String.format("Успешное подключение к post /categories/groups/%s", groupId));
 
