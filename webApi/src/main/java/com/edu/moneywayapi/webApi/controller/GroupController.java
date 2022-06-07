@@ -161,7 +161,7 @@ public class GroupController {
         log.debug(String.format("Успешное подключение к post /groups/%s/users", id));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!groupService.existsUser(id, authentication.getName())) {
+        if (groupService.existsUser(id, authentication.getName())) {
             log.warn("Пользователь уже в группе");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
